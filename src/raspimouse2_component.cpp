@@ -29,6 +29,8 @@ namespace raspimouse2
 
 RaspiMouse2::RaspiMouse2()
 : rclcpp_lifecycle::LifecycleNode("raspimouse2"),
+  odom_(rosidl_generator_cpp::MessageInitialization::ZERO),
+  odom_transform_(rosidl_generator_cpp::MessageInitialization::ZERO),
   linear_velocity(0),
   angular_velocity(0),
   last_odom_time_(0)
@@ -42,8 +44,23 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
 
   // Publisher for odometry data
   odom_pub_ = create_publisher<nav_msgs::Odometry>("odom");
-  odom_ = std::make_shared<nav_msgs::msg::Odometry>(
-      rosidl_generator_cpp::MessageInitialization::ZERO);
+  odom_.pose.pose.position.x = 0;
+  odom_.pose.pose.position.y = 0;
+  odom_.pose.pose.orientation.x = 0;
+  odom_.pose.pose.orientation.y = 0;
+  odom_.pose.pose.orientation.z = 0;
+  odom_.pose.pose.orientation.w = 0;
+  odom_theta_ = 0;
+  // Publisher for odometry transform
+  odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>();
+  odom_transform_.header.frame_id = "odom";
+  odom_transform_.header.child_frame_id = "base_link";
+  odom_transform_.transform.translation.x = 0;
+  odom_transform_.transform.translation.y = 0;
+  odom_transform_.transform.rotation.x = 0;
+  odom_transform_.transform.rotation.y = 0;
+  odom_transform_.transform.rotation.z = 0;
+  odom_transform_.transform.rotation.w = 0;
   // Timer for providing the odometry data
   odom_timer_ = create_wall_timer(0.1s, std::bind(&RaspiMouse2::publish_odometry, this));
 
@@ -73,10 +90,6 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
     RCLCPP_ERROR(get_logger(), "Failed to open right motor device /dev/rtmotor_raw_r0");
     return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILED;
   }
-
-  odom_.linear.x = 0;
-  odom_.linear.y = 0;
-  odom_.angular.z = 0;
 
   return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
 }
@@ -115,7 +128,7 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_cleanup(const rclcpp_lifecycle::S
   RCLCPP_INFO(this->get_logger(), "Cleaning up node");
 
   odom_pub_.reset();
-  odom_.reset();
+  odom_transform_broadcaster_.reset();
   odom_timer_.reset();
   velocity_sub_.reset();
   power_service_.reset();
@@ -136,9 +149,21 @@ void RaspiMouse2::publish_odometry()
   last_odom_time_ = now();
   auto dt = last_odom_time_ - old_last_odom_time_;
 
-  odom.linear.x += linear_velocity * cos(odom_theta) * dt.seconds();
-  odom.linear.y += linear_velocity * sin(odom_theta) * dt.seconds();
-  odom.angular.z += angular_velocity * dt.seconds();
+  odom_.pose.pose.position.x += linear_velocity * cos(odom_theta) * dt.seconds();
+  odom_.pose.pose.position.y += linear_velocity * sin(odom_theta) * dt.seconds();
+  odom_theta_ += angular.z += angular_velocity * dt.seconds();
+  odom_q_.setRPY(0, 0, odom_theta_);
+  odom_.pose.orientation = odom_q_;
+  odom_pub_.publish(odom_);
+
+  odom_transform_.header.stamp = last_odom_time_;
+  odom_transform_.transform.translation.x = odom_.pose.pose.position.x;
+  odom_transform_.transform.translation.y = odom_.pose.pose.position.y;
+  odom_transform_.transform.rotation.x = odom_q.x();
+  odom_transform_.transform.rotation.y = odom_q.y();
+  odom_transform_.transform.rotation.z = odom_q.z();
+  odom_transform_.transform.rotation.w = odom_q.w();
+  odom_transform_broadcaster_.sendTransform(odom_transform_);
 }
 
 void RaspiMouse2::velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg)

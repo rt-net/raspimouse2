@@ -69,8 +69,15 @@ public:
 
 private:
   rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
-  nav_msgs::Odometry::SharedPtr odom_;
+  nav_msgs::Odometry odom_;
+  tf2_ros::TransformBroadcaster::SharedPtr odom_transform_broadcaster_;
+  geometry_msgs::msg::TransformStamped odom_transform_;
+  tf2::Quarternion odom_q_;
   rclcpp::TimerBase::SharedPtr odom_timer_;
+  rcl_time_point_value_t last_odom_time_;
+  double linear_velocity;
+  double angular_velocity;
+  double odom_theta_;
 
   rclcpp_lifecycle::LifecycleSubscriber<geometry_msgs::msg::Twist>::SharedPtr velocity_sub_;
 
@@ -81,10 +88,6 @@ private:
   std::shared_ptr<std::ofstream> power_control_;
   std::shared_ptr<std::ofstream> left_motor_control_;
   std::shared_ptr<std::ofstream> right_motor_control_;
-  double linear_velocity;
-  double angular_velocity;
-  geometry_msgs::msg::Twist odom_;
-  rcl_time_point_value_t last_odom_time_;
 
   rcl_lifecycle_transition_key_t on_configure(const rclcpp_lifecycle::State &);
   rcl_lifecycle_transition_key_t on_activate(const rclcpp_lifecycle::State &);
