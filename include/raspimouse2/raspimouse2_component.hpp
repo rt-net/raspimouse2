@@ -75,8 +75,8 @@ private:
   tf2::Quarternion odom_q_;
   rclcpp::TimerBase::SharedPtr odom_timer_;
   rcl_time_point_value_t last_odom_time_;
-  double linear_velocity;
-  double angular_velocity;
+  double linear_velocity_;
+  double angular_velocity_;
   double odom_theta_;
 
   rclcpp_lifecycle::LifecycleSubscriber<geometry_msgs::msg::Twist>::SharedPtr velocity_sub_;

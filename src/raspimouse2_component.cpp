@@ -31,8 +31,8 @@ RaspiMouse2::RaspiMouse2()
 : rclcpp_lifecycle::LifecycleNode("raspimouse2"),
   odom_(rosidl_generator_cpp::MessageInitialization::ZERO),
   odom_transform_(rosidl_generator_cpp::MessageInitialization::ZERO),
-  linear_velocity(0),
-  angular_velocity(0),
+  linear_velocity_(0),
+  angular_velocity_(0),
   last_odom_time_(0)
 {
   // No construction necessary (node is uninitialised)
@@ -44,6 +44,7 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
 
   // Publisher for odometry data
   odom_pub_ = create_publisher<nav_msgs::Odometry>("odom");
+  odom_.child_frame_id = "base_link";
   odom_.pose.pose.position.x = 0;
   odom_.pose.pose.position.y = 0;
   odom_.pose.pose.orientation.x = 0;
@@ -102,8 +103,8 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_activate(const rclcpp_lifecycle::
   velocity_sub_->on_activate();
   power_service_->on_activate();
 
-  linear_velocity = 0;
-  angular_velocity = 0;
+  linear_velocity_ = 0;
+  angular_velocity_ = 0;
   last_odom_time_ = now();
 
   return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
@@ -149,11 +150,13 @@ void RaspiMouse2::publish_odometry()
   last_odom_time_ = now();
   auto dt = last_odom_time_ - old_last_odom_time_;
 
-  odom_.pose.pose.position.x += linear_velocity * cos(odom_theta) * dt.seconds();
-  odom_.pose.pose.position.y += linear_velocity * sin(odom_theta) * dt.seconds();
-  odom_theta_ += angular.z += angular_velocity * dt.seconds();
+  odom_.pose.pose.position.x += linear_velocity_ * cos(odom_theta) * dt.seconds();
+  odom_.pose.pose.position.y += linear_velocity_ * sin(odom_theta) * dt.seconds();
+  odom_theta_ += angular.z += angular_velocity_ * dt.seconds();
   odom_q_.setRPY(0, 0, odom_theta_);
   odom_.pose.orientation = odom_q_;
+  odom_.twist.twist.linear.x = linear_velocity_;
+  odom_.twist.twist.angular.z = angular_velocity_;
   odom_pub_.publish(odom_);
 
   odom_transform_.header.stamp = last_odom_time_;
@@ -168,11 +171,11 @@ void RaspiMouse2::publish_odometry()
 
 void RaspiMouse2::velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg)
 {
-  linear_velocity = msg->linear.x;
-  angular_velocity = msg->angular.z;
+  linear_velocity_ = msg->linear.x;
+  angular_velocity_ = msg->angular.z;
 
-  auto forward_hz = 80000 * msg->linear.x / (9 * M_PI);
-  auto rotation_hz = 400 * msg->angular.z / M_PI;
+  auto forward_hz = 80000 * linear_velocity_ / (9 * M_PI);
+  auto rotation_hz = 400 * angular_velocity_ / M_PI;
 
   left_motor_control_ << static_cast<int>(round(forward_hz - rotation_hz)) << std::endl;
   right_motor_control_ << static_cast<int>(round(forward_hz + rotation_hz)) << std::endl;
