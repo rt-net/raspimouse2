@@ -16,9 +16,10 @@
 
 #include <cmath>
 #include <chrono>
+#include <fstream>
+#include <functional>
 #include <memory>
 #include <rclcpp/rclcpp.hpp>
-#include <class_loader/class_loader_register_macro.h>
 #include <rosidl_generator_cpp/message_initialization.hpp>
 #include <lifecycle_msgs/msg/transition.hpp>
 
@@ -31,9 +32,9 @@ RaspiMouse2::RaspiMouse2()
 : rclcpp_lifecycle::LifecycleNode("raspimouse2"),
   odom_(rosidl_generator_cpp::MessageInitialization::ZERO),
   odom_transform_(rosidl_generator_cpp::MessageInitialization::ZERO),
+  last_odom_time_(0),
   linear_velocity_(0),
-  angular_velocity_(0),
-  last_odom_time_(0)
+  angular_velocity_(0)
 {
   // No construction necessary (node is uninitialised)
 }
@@ -42,8 +43,10 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
 {
   RCLCPP_INFO(this->get_logger(), "Configuring node");
 
+  using namespace std::placeholders;  // for _1, _2, _3...
+
   // Publisher for odometry data
-  odom_pub_ = create_publisher<nav_msgs::Odometry>("odom");
+  odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom");
   odom_.child_frame_id = "base_link";
   odom_.pose.pose.position.x = 0;
   odom_.pose.pose.position.y = 0;
@@ -53,9 +56,11 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
   odom_.pose.pose.orientation.w = 0;
   odom_theta_ = 0;
   // Publisher for odometry transform
-  odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>();
+  // TODO: When the tf2 API is updated to match rclcpp, re-enable this broadcaster
+  //odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
+    //std::static_pointer_cast<rclcpp::Node>(this->shared_from_this()));
   odom_transform_.header.frame_id = "odom";
-  odom_transform_.header.child_frame_id = "base_link";
+  odom_transform_.child_frame_id = "base_link";
   odom_transform_.transform.translation.x = 0;
   odom_transform_.transform.translation.y = 0;
   odom_transform_.transform.rotation.x = 0;
@@ -63,11 +68,11 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
   odom_transform_.transform.rotation.z = 0;
   odom_transform_.transform.rotation.w = 0;
   // Timer for providing the odometry data
-  odom_timer_ = create_wall_timer(0.1s, std::bind(&RaspiMouse2::publish_odometry, this));
+  odom_timer_ = create_wall_timer(100ms, std::bind(&RaspiMouse2::publish_odometry, this));
 
   // Subscriber for velocity commands
   velocity_sub_ = create_subscription<geometry_msgs::msg::Twist>(
-      "cmd_vel", std::bind(&RaspiMouse2::msg::velocity_command, this, _1));
+      "cmd_vel", std::bind(&RaspiMouse2::velocity_command, this, _1));
 
   // Motor power control service
   power_service_ = create_service<std_srvs::srv::SetBool>(
@@ -77,19 +82,19 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
   watchdog_timer_ = create_wall_timer(5s, std::bind(&RaspiMouse2::watchdog, this));
 
   power_control_ = std::make_shared<std::ofstream>("/dev/rtmotoren0");
-  if (!power_control_.is_open()) {
+  if (!power_control_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open motor power device /dev/rtmotoren0");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILED;
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
   }
   left_motor_control_ = std::make_shared<std::ofstream>("/dev/rtmotor_raw_l0");
-  if (!left_motor_control_.is_open()) {
+  if (!left_motor_control_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open left motor device /dev/rtmotor_raw_l0");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILED;
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
   }
   right_motor_control_ = std::make_shared<std::ofstream>("/dev/rtmotor_raw_r0");
-  if (!right_motor_control_.is_open()) {
+  if (!right_motor_control_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open right motor device /dev/rtmotor_raw_r0");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILED;
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
   }
 
   return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
@@ -100,8 +105,6 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_activate(const rclcpp_lifecycle::
   RCLCPP_INFO(this->get_logger(), "Activating node");
 
   odom_pub_->on_activate();
-  velocity_sub_->on_activate();
-  power_service_->on_activate();
 
   linear_velocity_ = 0;
   angular_velocity_ = 0;
@@ -118,8 +121,6 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_deactivate(const rclcpp_lifecycle
   set_motor_power(false);
 
   odom_pub_->on_deactivate();
-  velocity_sub_->on_deactivate();
-  power_service_->on_deactivate();
 
   return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
 }
@@ -142,22 +143,24 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_cleanup(const rclcpp_lifecycle::S
   return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
 }
 
-} // namespace raspimouse2
-
 void RaspiMouse2::publish_odometry()
 {
   auto old_last_odom_time = last_odom_time_;
   last_odom_time_ = now();
-  auto dt = last_odom_time_ - old_last_odom_time_;
+  auto dt = last_odom_time_ - old_last_odom_time;
 
-  odom_.pose.pose.position.x += linear_velocity_ * cos(odom_theta) * dt.seconds();
-  odom_.pose.pose.position.y += linear_velocity_ * sin(odom_theta) * dt.seconds();
-  odom_theta_ += angular.z += angular_velocity_ * dt.seconds();
-  odom_q_.setRPY(0, 0, odom_theta_);
-  odom_.pose.orientation = odom_q_;
+  odom_.pose.pose.position.x += linear_velocity_ * cos(odom_theta_) * dt.nanoseconds() / 1e9;
+  odom_.pose.pose.position.y += linear_velocity_ * sin(odom_theta_) * dt.nanoseconds() / 1e9;
+  odom_theta_ += angular_velocity_ * dt.nanoseconds() / 1e9;
+  tf2::Quaternion odom_q;
+  odom_q.setRPY(0, 0, odom_theta_);
+  odom_.pose.pose.orientation.x = odom_q.x();
+  odom_.pose.pose.orientation.y = odom_q.y();
+  odom_.pose.pose.orientation.z = odom_q.z();
+  odom_.pose.pose.orientation.w = odom_q.w();
   odom_.twist.twist.linear.x = linear_velocity_;
   odom_.twist.twist.angular.z = angular_velocity_;
-  odom_pub_.publish(odom_);
+  odom_pub_->publish(odom_);
 
   odom_transform_.header.stamp = last_odom_time_;
   odom_transform_.transform.translation.x = odom_.pose.pose.position.x;
@@ -166,7 +169,8 @@ void RaspiMouse2::publish_odometry()
   odom_transform_.transform.rotation.y = odom_q.y();
   odom_transform_.transform.rotation.z = odom_q.z();
   odom_transform_.transform.rotation.w = odom_q.w();
-  odom_transform_broadcaster_.sendTransform(odom_transform_);
+  // TODO: When the tf2 API is updated to match rclcpp, re-enable this broadcaster
+  //odom_transform_broadcaster_->sendTransform(odom_transform_);
 }
 
 void RaspiMouse2::velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg)
@@ -177,8 +181,8 @@ void RaspiMouse2::velocity_command(const geometry_msgs::msg::Twist::SharedPtr ms
   auto forward_hz = 80000 * linear_velocity_ / (9 * M_PI);
   auto rotation_hz = 400 * angular_velocity_ / M_PI;
 
-  left_motor_control_ << static_cast<int>(round(forward_hz - rotation_hz)) << std::endl;
-  right_motor_control_ << static_cast<int>(round(forward_hz + rotation_hz)) << std::endl;
+  *left_motor_control_ << static_cast<int>(round(forward_hz - rotation_hz)) << std::endl;
+  *right_motor_control_ << static_cast<int>(round(forward_hz + rotation_hz)) << std::endl;
   watchdog_timer_->reset();
 }
 
@@ -188,7 +192,7 @@ void RaspiMouse2::handle_motor_power(
     const std::shared_ptr<std_srvs::srv::SetBool::Response> response)
 {
   (void)request_header;
-  set_power(request->data);
+  set_motor_power(request->data);
   response->success = true;
   if (request->data) {
     response->message = "Motors are on";
@@ -197,7 +201,7 @@ void RaspiMouse2::handle_motor_power(
   }
 }
 
-void watchdog()
+void RaspiMouse2::watchdog()
 {
   RCLCPP_INFO(get_logger(), "Watchdog timeout; stopping motors");
   stop_motors();
@@ -206,20 +210,24 @@ void watchdog()
 void RaspiMouse2::set_motor_power(bool value)
 {
   if (value) {
-    ofs << '1' << std::endl;
+    *power_control_ << '1' << std::endl;
     RCLCPP_INFO(get_logger(), "Turned motors on");
     // Start the watchdog timer
     watchdog_timer_->reset();
   } else {
-    ofs << '0' << std::endl;
+    *power_control_ << '0' << std::endl;
     RCLCPP_INFO(get_logger(), "Turned motors off");
   }
 }
 
 void RaspiMouse2::stop_motors()
 {
-  left_motor_control_ << 0 << std::endl;
-  right_motor_control_ << 0 << std::endl;
+  *left_motor_control_ << 0 << std::endl;
+  *right_motor_control_ << 0 << std::endl;
 }
+
+} // namespace raspimouse2
+
+#include <class_loader/register_macro.hpp>
 
 CLASS_LOADER_REGISTER_CLASS(raspimouse2::RaspiMouse2, rclcpp_lifecycle::LifecycleNode)

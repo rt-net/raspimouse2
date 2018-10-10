@@ -56,7 +56,11 @@ extern "C" {
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <rclcpp_lifecycle/lifecycle_publisher.hpp>
-#include <greeting_msg/msg/greeting.hpp>
+#include <rclcpp/time.hpp>
+#include <std_srvs/srv/set_bool.hpp>
+#include <nav_msgs/msg/odometry.hpp>
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2/LinearMath/Quaternion.h>
 
 namespace raspimouse2
 {
@@ -68,20 +72,19 @@ public:
   RaspiMouse2();
 
 private:
-  rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>::SharedPtr odom_pub_;
-  nav_msgs::Odometry odom_;
-  tf2_ros::TransformBroadcaster::SharedPtr odom_transform_broadcaster_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>> odom_pub_;
+  nav_msgs::msg::Odometry odom_;
+  std::shared_ptr<tf2_ros::TransformBroadcaster> odom_transform_broadcaster_;
   geometry_msgs::msg::TransformStamped odom_transform_;
-  tf2::Quarternion odom_q_;
   rclcpp::TimerBase::SharedPtr odom_timer_;
-  rcl_time_point_value_t last_odom_time_;
+  rclcpp::Time last_odom_time_;
   double linear_velocity_;
   double angular_velocity_;
   double odom_theta_;
 
-  rclcpp_lifecycle::LifecycleSubscriber<geometry_msgs::msg::Twist>::SharedPtr velocity_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr velocity_sub_;
 
-  rclcpp_lifecycle::LifecycleService<std_srvs::srv::SetBool>::SharedPtr power_service_;
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr power_service_;
 
   rclcpp::TimerBase::SharedPtr watchdog_timer_;
 
@@ -106,6 +109,6 @@ private:
   void stop_motors();
 };
 
-} // namespace managed_greeter
+} // namespace raspimouse2
 
 #endif // RASPIMOUSE2__RASPIMOUSE2_COMPONENT_HPP_
