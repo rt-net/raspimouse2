@@ -57,10 +57,14 @@ extern "C" {
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <rclcpp_lifecycle/lifecycle_publisher.hpp>
 #include <rclcpp/time.hpp>
+#include <std_msgs/int16multiarray.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2/LinearMath/Quaternion.h>
+
+#include <raspimouse2/msg/leds.hpp>
+#include <raspimouse2/msg/switches.hpp>
 
 namespace raspimouse2
 {
@@ -83,14 +87,26 @@ private:
   double odom_theta_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr velocity_sub_;
-
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr power_service_;
-
   rclcpp::TimerBase::SharedPtr watchdog_timer_;
 
   std::shared_ptr<std::ofstream> power_control_;
   std::shared_ptr<std::ofstream> left_motor_control_;
   std::shared_ptr<std::ofstream> right_motor_control_;
+
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<raspimouse2::msg::Switches>> switches_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int16MultiArray>> light_sensors_pub_;
+  rclcpp::Subscription<raspimouse2::msg::LEDs>::SharedPtr leds_sub_;
+  rclcpp::TimerBase::SharedPtr sensors_timer_;
+
+  std::shared_ptr<std::ofstream> led0_output_;
+  std::shared_ptr<std::ofstream> led1_output_;
+  std::shared_ptr<std::ofstream> led2_output_;
+  std::shared_ptr<std::ofstream> led3_output_;
+  std::shared_ptr<std::ofstream> switch0_input_;
+  std::shared_ptr<std::ofstream> switch1_input_;
+  std::shared_ptr<std::ofstream> switch2_input_;
+  std::shared_ptr<std::ofstream> light_sensors_input_;
 
   rcl_lifecycle_transition_key_t on_configure(const rclcpp_lifecycle::State &);
   rcl_lifecycle_transition_key_t on_activate(const rclcpp_lifecycle::State &);
@@ -98,7 +114,11 @@ private:
   rcl_lifecycle_transition_key_t on_cleanup(const rclcpp_lifecycle::State &);
 
   void publish_odometry();
+  void publish_sensors();
+  void publish_switches();
+  void publish_light_sensors();
   void velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg);
+  void leds_command(const raspimouse2::msg::LEDs::SharedPtr msg);
   void handle_motor_power(
       const std::shared_ptr<rmw_request_id_t> request_header,
       const std::shared_ptr<std_srvs::srv::SetBool::Request> request,

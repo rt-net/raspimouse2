@@ -87,6 +87,17 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
   // Watchdog timer to prevent out-of-control robots
   watchdog_timer_ = create_wall_timer(60s, std::bind(&RaspiMouse2::watchdog, this));
 
+  // Publisher for switch states
+  switches_pub_ = this->create_publisher<raspimouse2::msg::Switches>("switches");
+  // Publisher for light sensors
+  light_sensors_pub_ = this->create_publisher<std_msgs::msg::Int16MultiArray>("light_sensors");
+  // Timer for publishing sensor information
+  sensors_timer_ = create_wall_timer(100ms, std::bind(&RaspiMouse2::publish_sensors, this));
+  sensors_timer_->cancel();
+  // Subscriber for LED commands
+  leds_sub_ = create_subscription<raspimouse2::msg::LEDs>(
+      "leds", std::bind(&RaspiMouse2::leds_command, this, _1));
+
   power_control_ = std::make_shared<std::ofstream>("/dev/rtmotoren0");
   if (!power_control_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open motor power device /dev/rtmotoren0");
@@ -100,6 +111,46 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_configure(const rclcpp_lifecycle:
   right_motor_control_ = std::make_shared<std::ofstream>("/dev/rtmotor_raw_r0");
   if (!right_motor_control_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open right motor device /dev/rtmotor_raw_r0");
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+  }
+  led0_output_ = std::make_shared<std::ofstream>("/dev/rtled0");
+  if (!led0_output_->is_open()) {
+    RCLCPP_ERROR(get_logger(), "Failed to open LED 0 device /dev/rtled0");
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+  }
+  led1_output_ = std::make_shared<std::ofstream>("/dev/rtled1");
+  if (!led1_output_->is_open()) {
+    RCLCPP_ERROR(get_logger(), "Failed to open LED 1 device /dev/rtled1");
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+  }
+  led2_output_ = std::make_shared<std::ofstream>("/dev/rtled2");
+  if (!led2_output_->is_open()) {
+    RCLCPP_ERROR(get_logger(), "Failed to open LED 2 device /dev/rtled2");
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+  }
+  led3_output_ = std::make_shared<std::ofstream>("/dev/rtled3");
+  if (!led3_output_->is_open()) {
+    RCLCPP_ERROR(get_logger(), "Failed to open LED 3 device /dev/rtled3");
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+  }
+  switch0_input_ = std::make_shared<std::ofstream>("/dev/rtswitch0");
+  if (!switch0_input_->is_open()) {
+    RCLCPP_ERROR(get_logger(), "Failed to open switch 0 device /dev/rtswitch0");
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+  }
+  switch1_input_ = std::make_shared<std::ofstream>("/dev/rtswitch1");
+  if (!switch1_input_->is_open()) {
+    RCLCPP_ERROR(get_logger(), "Failed to open switch 1 device /dev/rtswitch1");
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+  }
+  switch2_input_ = std::make_shared<std::ofstream>("/dev/rtswitch2");
+  if (!switch2_input_->is_open()) {
+    RCLCPP_ERROR(get_logger(), "Failed to open switch 2 device /dev/rtswitch2");
+    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+  }
+  light_sensors_input_ = std::make_shared<std::ofstream>("/dev/rtlightsensor0");
+  if (!light_sensors_intput_->is_open()) {
+    RCLCPP_ERROR(get_logger(), "Failed to open light sensors device /dev/rtlightsensor0");
     return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
   }
 
@@ -117,8 +168,11 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_activate(const rclcpp_lifecycle::
   RCLCPP_INFO(this->get_logger(), "Activating Raspimouse node");
 
   odom_pub_->on_activate();
-  // Start the odometry calculations
+  switches_pub_->on_activate();
+  light_sensors_pub_->on_activate();
+  // Start the odometry calculations and sensor publishing
   odom_timer_->reset();
+  sensors_timer_->reset();
 
   return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
 }
@@ -130,9 +184,12 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_deactivate(const rclcpp_lifecycle
   // Power off the motors
   set_motor_power(false);
 
-  // Stop the odometry calculations
+  // Stop the odometry calculations and sensor publishing
   odom_timer_->cancel();
   odom_pub_->on_deactivate();
+  sensors_timer_->cancel();
+  switches_pub_->on_deactivate();
+  light_sensors_pub_->on_deactivate();
 
   return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
 }
@@ -148,26 +205,35 @@ rcl_lifecycle_transition_key_t RaspiMouse2::on_cleanup(const rclcpp_lifecycle::S
   power_service_.reset();
   watchdog_timer_.reset();
 
+  switches_pub_.reset();
+  light_sensors_pub_.reset();
+  leds_sub_.reset();
+  sensors_timer_.reset();
+
   power_control_.reset();
   left_motor_control_.reset();
   right_motor_control_.reset();
+  led0_output_.reset();
+  led1_output_.reset();
+  led2_output_.reset();
+  led3_output_.reset();
+  switch0_input_.reset();
+  switch1_input_.reset();
+  switch2_input_.reset();
+  light_sensors_input_.reset();
 
   return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
 }
 
 void RaspiMouse2::publish_odometry()
 {
-  RCLCPP_INFO(get_logger(), "Starting odometry publish");
   auto old_last_odom_time = last_odom_time_;
   last_odom_time_ = now();
   auto dt = last_odom_time_ - old_last_odom_time;
-  RCLCPP_INFO(get_logger(), "old odom time: %d, new odom time: %d, dt: %d", old_last_odom_time.nanoseconds(), last_odom_time_.nanoseconds(), dt.nanoseconds());
 
   odom_.pose.pose.position.x += linear_velocity_ * cos(odom_theta_) * dt.nanoseconds() / 1e9;
   odom_.pose.pose.position.y += linear_velocity_ * sin(odom_theta_) * dt.nanoseconds() / 1e9;
   odom_theta_ += angular_velocity_ * dt.nanoseconds() / 1e9;
-  RCLCPP_INFO(get_logger(), "linear velocity: %f, angular velocity: %f", linear_velocity_, angular_velocity_);
-  RCLCPP_INFO(get_logger(), "x: %f, y: %f, theta: %f", odom_.pose.pose.position.x, odom_.pose.pose.position.y, odom_theta_);
   tf2::Quaternion odom_q;
   odom_q.setRPY(0, 0, odom_theta_);
   odom_.pose.pose.orientation.x = odom_q.x();
@@ -189,6 +255,25 @@ void RaspiMouse2::publish_odometry()
   odom_transform_broadcaster_->sendTransform(odom_transform_);*/
 }
 
+void RaspiMouse2::publish_sensors()
+{
+  publish_switches();
+  publish_light_sensors();
+}
+
+void RaspiMouse2::publish_switches()
+{
+  raspimouse2::msg::Switches switch_states;
+  switch_states.switch0 = false;
+  switch_states.switch1 = false;
+  switch_states.switch2 = false;
+  switches_pub_->publish(switch_states);
+}
+
+void RaspiMouse2::publish_light_sensors()
+{
+}
+
 void RaspiMouse2::velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg)
 {
   linear_velocity_ = msg->linear.x;
@@ -201,6 +286,33 @@ void RaspiMouse2::velocity_command(const geometry_msgs::msg::Twist::SharedPtr ms
   *right_motor_control_ << static_cast<int>(round(forward_hz + rotation_hz)) << std::endl;
   // Reset the watchdog timeout
   watchdog_timer_->reset();
+}
+
+void RaspiMouse2::leds_command(const raspimouse2::msg::LEDs::SharedPtr msg)
+{
+  if (msg->led0) {
+    *led0_output_ << 1;
+  } else {
+    *led0_output_ << 0;
+  }
+
+  if (msg->led1) {
+    *led1_output_ << 1;
+  } else {
+    *led1_output_ << 0;
+  }
+
+  if (msg->led2) {
+    *led2_output_ << 1;
+  } else {
+    *led2_output_ << 0;
+  }
+
+  if (msg->led3) {
+    *led3_output_ << 1;
+  } else {
+    *led3_output_ << 0;
+  }
 }
 
 void RaspiMouse2::handle_motor_power(

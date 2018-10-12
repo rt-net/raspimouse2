@@ -11,6 +11,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(class_loader REQUIRED)
@@ -20,6 +21,11 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
+
+rosidl_generate_interfaces(${PROJECT_NAME}_msgs
+  "msg/LEDs.msg"
+  "msg/Switches.msg"
+  )
 
 include_directories(include)
 
@@ -61,4 +67,5 @@ install(TARGETS
   raspimouse2
   DESTINATION lib/${PROJECT_NAME})
 
+ament_export_dependencies(rosidl_default_runtime)
 ament_package()
