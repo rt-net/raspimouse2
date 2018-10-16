@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(raspimouse2)
+project(raspimouse)
 
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
@@ -11,7 +11,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(class_loader REQUIRED)
@@ -21,11 +20,7 @@ find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
-
-rosidl_generate_interfaces(${PROJECT_NAME}_msgs
-  "msg/LEDs.msg"
-  "msg/Switches.msg"
-  )
+find_package(raspimouse_msgs REQUIRED)
 
 include_directories(include)
 
@@ -41,6 +36,7 @@ ament_target_dependencies(raspimouse2_component
   nav_msgs
   tf2
   tf2_ros
+  raspimouse_msgs
   )
 rclcpp_register_node_plugins(raspimouse2_component "raspimouse2::RaspiMouse2")
 
@@ -56,6 +52,7 @@ ament_target_dependencies(raspimouse2
   nav_msgs
   tf2
   tf2_ros
+  raspimouse_msgs
   )
 
 install(TARGETS

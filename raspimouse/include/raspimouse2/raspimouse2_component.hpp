@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef RASPIMOUSE2__RASPIMOUSE2_COMPONENT_HPP_
-#define RASPIMOUSE2__RASPIMOUSE2_COMPONENT_HPP_
+#ifndef RASPIMOUSE__RASPIMOUSE_COMPONENT_HPP_
+#define RASPIMOUSE__RASPIMOUSE_COMPONENT_HPP_
 
 #if __cplusplus
 extern "C" {
@@ -23,30 +23,30 @@ extern "C" {
 // demos/composition/include/composition/visibility_control.h at https://github.com/ros2/demos
 #if defined _WIN32 || defined __CYGWIN__
   #ifdef __GNUC__
-    #define RASPIMOUSE2_EXPORT __attribute__ ((dllexport))
-    #define RASPIMOUSE2_IMPORT __attribute__ ((dllimport))
+    #define RASPIMOUSE_EXPORT __attribute__ ((dllexport))
+    #define RASPIMOUSE_IMPORT __attribute__ ((dllimport))
   #else
-    #define RASPIMOUSE2_EXPORT __declspec(dllexport)
-    #define RASPIMOUSE2_IMPORT __declspec(dllimport)
+    #define RASPIMOUSE_EXPORT __declspec(dllexport)
+    #define RASPIMOUSE_IMPORT __declspec(dllimport)
   #endif
-  #ifdef RASPIMOUSE2_BUILDING_DLL
-    #define RASPIMOUSE2_PUBLIC RASPIMOUSE2_EXPORT
+  #ifdef RASPIMOUSE_BUILDING_DLL
+    #define RASPIMOUSE_PUBLIC RASPIMOUSE_EXPORT
   #else
-    #define RASPIMOUSE2_PUBLIC RASPIMOUSE2_IMPORT
+    #define RASPIMOUSE_PUBLIC RASPIMOUSE_IMPORT
   #endif
-  #define RASPIMOUSE2_PUBLIC_TYPE RASPIMOUSE2_PUBLIC
-  #define RASPIMOUSE2_LOCAL
+  #define RASPIMOUSE_PUBLIC_TYPE RASPIMOUSE_PUBLIC
+  #define RASPIMOUSE_LOCAL
 #else
-  #define RASPIMOUSE2_EXPORT __attribute__ ((visibility("default")))
-  #define RASPIMOUSE2_IMPORT
+  #define RASPIMOUSE_EXPORT __attribute__ ((visibility("default")))
+  #define RASPIMOUSE_IMPORT
   #if __GNUC__ >= 4
-    #define RASPIMOUSE2_PUBLIC __attribute__ ((visibility("default")))
-    #define RASPIMOUSE2_LOCAL  __attribute__ ((visibility("hidden")))
+    #define RASPIMOUSE_PUBLIC __attribute__ ((visibility("default")))
+    #define RASPIMOUSE_LOCAL  __attribute__ ((visibility("hidden")))
   #else
-    #define RASPIMOUSE2_PUBLIC
-    #define RASPIMOUSE2_LOCAL
+    #define RASPIMOUSE_PUBLIC
+    #define RASPIMOUSE_LOCAL
   #endif
-  #define RASPIMOUSE2_PUBLIC_TYPE
+  #define RASPIMOUSE_PUBLIC_TYPE
 #endif
 
 #if __cplusplus
@@ -57,23 +57,24 @@ extern "C" {
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <rclcpp_lifecycle/lifecycle_publisher.hpp>
 #include <rclcpp/time.hpp>
-#include <std_msgs/int16multiarray.hpp>
+#include <std_msgs/msg/int16.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 #include <nav_msgs/msg/odometry.hpp>
 #include <tf2_ros/transform_broadcaster.h>
 #include <tf2/LinearMath/Quaternion.h>
 
-#include <raspimouse2/msg/leds.hpp>
-#include <raspimouse2/msg/switches.hpp>
+#include <raspimouse_msgs/msg/leds.hpp>
+#include <raspimouse_msgs/msg/switches.hpp>
+#include <raspimouse_msgs/msg/light_sensors.hpp>
 
-namespace raspimouse2
+namespace raspimouse
 {
 
-class RaspiMouse2 : public rclcpp_lifecycle::LifecycleNode
+class Raspimouse : public rclcpp_lifecycle::LifecycleNode
 {
 public:
-  RASPIMOUSE2_PUBLIC
-  RaspiMouse2();
+  RASPIMOUSE_PUBLIC
+  Raspimouse();
 
 private:
   std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>> odom_pub_;
@@ -85,6 +86,9 @@ private:
   double linear_velocity_;
   double angular_velocity_;
   double odom_theta_;
+  bool use_pulse_counters_;
+  int last_pulse_count_left_;
+  int last_pulse_count_right_;
 
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr velocity_sub_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr power_service_;
@@ -94,19 +98,18 @@ private:
   std::shared_ptr<std::ofstream> left_motor_control_;
   std::shared_ptr<std::ofstream> right_motor_control_;
 
-  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<raspimouse2::msg::Switches>> switches_pub_;
-  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<std_msgs::msg::Int16MultiArray>> light_sensors_pub_;
-  rclcpp::Subscription<raspimouse2::msg::LEDs>::SharedPtr leds_sub_;
-  rclcpp::TimerBase::SharedPtr sensors_timer_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<raspimouse_msgs::msg::Switches>> switches_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<raspimouse_msgs::msg::LightSensors>> light_sensors_pub_;
+  rclcpp::Subscription<raspimouse_msgs::msg::Leds>::SharedPtr leds_sub_;
+  rclcpp::Subscription<std_msgs::msg::Int16>::SharedPtr buzzer_sub_;
+  rclcpp::TimerBase::SharedPtr switches_timer_;
+  rclcpp::TimerBase::SharedPtr light_sensors_timer_;
 
   std::shared_ptr<std::ofstream> led0_output_;
   std::shared_ptr<std::ofstream> led1_output_;
   std::shared_ptr<std::ofstream> led2_output_;
   std::shared_ptr<std::ofstream> led3_output_;
-  std::shared_ptr<std::ofstream> switch0_input_;
-  std::shared_ptr<std::ofstream> switch1_input_;
-  std::shared_ptr<std::ofstream> switch2_input_;
-  std::shared_ptr<std::ofstream> light_sensors_input_;
+  std::shared_ptr<std::ofstream> buzzer_output_;
 
   rcl_lifecycle_transition_key_t on_configure(const rclcpp_lifecycle::State &);
   rcl_lifecycle_transition_key_t on_activate(const rclcpp_lifecycle::State &);
@@ -114,21 +117,24 @@ private:
   rcl_lifecycle_transition_key_t on_cleanup(const rclcpp_lifecycle::State &);
 
   void publish_odometry();
-  void publish_sensors();
   void publish_switches();
   void publish_light_sensors();
+
   void velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg);
-  void leds_command(const raspimouse2::msg::LEDs::SharedPtr msg);
+  void leds_command(const raspimouse_msgs::msg::Leds::SharedPtr msg);
+  void buzzer_command(const std_msgs::msg::Int16::SharedPtr msg);
+
   void handle_motor_power(
       const std::shared_ptr<rmw_request_id_t> request_header,
       const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
       const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
   void watchdog();
-
   void set_motor_power(bool value);
   void stop_motors();
+  void calculate_odometry_from_pulse_counts(double &x, double &y, double &theta);
+  void estimate_odometry(double &x, double &y, double &theta);
 };
 
-} // namespace raspimouse2
+} // namespace raspimouse
 
-#endif // RASPIMOUSE2__RASPIMOUSE2_COMPONENT_HPP_
+#endif // RASPIMOUSE__RASPIMOUSE_COMPONENT_HPP_

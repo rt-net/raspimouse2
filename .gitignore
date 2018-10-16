@@ -51,3 +51,5 @@ qtcreator-*
 CATKIN_IGNORE
 
 *.plist
+
+*.swp
