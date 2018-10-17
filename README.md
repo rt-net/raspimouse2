@@ -1,5 +1,4 @@
-Raspimouse Node
-===============
+# Raspimouse Node
 
 ROS 2 node for the Raspimouse robot from RT.
 
@@ -36,11 +35,9 @@ Odometry information can be checked by echoing the `odom` topic.
 Similarly other sensor information can also be viewed by echoing the relevant topic.
 
 
-Topics
-------
+## Topics
 
-Subscribed
-~~~~~~~~~~
+### Subscribed
 
 - buzzer
   Type: std_msgs/Int16
@@ -55,8 +52,7 @@ Subscribed
   Turns the four LEDs on the front of the robot on and off.
 
 
-Published
-~~~~~~~~~
+### Published
 
 - light_sensors
   Type: raspimouse_msgs/LightSensors
@@ -74,16 +70,14 @@ Published
   Provides the status of each of the three push switches on the side of the robot.
   
 
-Services
---------
+## Services
 
 - motor_power
   Type: std_srvs/SetBool
   Call this service and pass `true` to enable the motors. Pass `false` to disable the motors.
 
 
-Parameters
-----------
+## Parameters
 
 - odometry_scale_left_wheel
   Type: double
@@ -111,8 +105,7 @@ Parameters
   will be used only if present.
 
 
-Known problems
---------------
+## Known problems
 
 - Due to instabilities in either the hardware pulse counters or the kernel driver for them, it is
   possible for reading from the pulse counters to cause the node to freeze. If this happens
