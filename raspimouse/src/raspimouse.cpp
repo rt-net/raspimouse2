@@ -15,7 +15,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <memory>
 
-#include "raspimouse2/raspimouse2_component.hpp"
+#include "raspimouse/raspimouse_component.hpp"
 
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);

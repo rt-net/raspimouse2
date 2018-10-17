@@ -24,9 +24,9 @@ find_package(raspimouse_msgs REQUIRED)
 
 include_directories(include)
 
-add_library(raspimouse2_component SHARED src/raspimouse2_component.cpp)
-target_compile_definitions(raspimouse2_component PRIVATE "RASPIMOUSE2_BUILDING_DLL")
-ament_target_dependencies(raspimouse2_component
+add_library(raspimouse_component SHARED src/raspimouse_component.cpp)
+target_compile_definitions(raspimouse_component PRIVATE "RASPIMOUSE_BUILDING_DLL")
+ament_target_dependencies(raspimouse_component
   rclcpp
   rclcpp_lifecycle
   class_loader
@@ -38,11 +38,11 @@ ament_target_dependencies(raspimouse2_component
   tf2_ros
   raspimouse_msgs
   )
-rclcpp_register_node_plugins(raspimouse2_component "raspimouse2::RaspiMouse2")
+rclcpp_register_node_plugins(raspimouse_component "raspimouse::Raspimouse")
 
-add_executable(raspimouse2 src/raspimouse2.cpp)
-target_link_libraries(raspimouse2 raspimouse2_component)
-ament_target_dependencies(raspimouse2
+add_executable(raspimouse src/raspimouse.cpp)
+target_link_libraries(raspimouse raspimouse_component)
+ament_target_dependencies(raspimouse
   rclcpp
   rclcpp_lifecycle
   class_loader
@@ -56,12 +56,12 @@ ament_target_dependencies(raspimouse2
   )
 
 install(TARGETS
-  raspimouse2_component
+  raspimouse_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin)
 install(TARGETS
-  raspimouse2
+  raspimouse
   DESTINATION lib/${PROJECT_NAME})
 
 ament_export_dependencies(rosidl_default_runtime)

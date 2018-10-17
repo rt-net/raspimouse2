@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "raspimouse2/raspimouse2_component.hpp"
+#include "raspimouse/raspimouse_component.hpp"
  
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -27,6 +27,7 @@
 
 using namespace std::chrono_literals;
 
+constexpr auto use_pulse_counters_param = "use_pulse_counters";
 constexpr auto use_light_sensors_param = "use_light_sensors";
 constexpr auto odometry_scale_left_wheel_param = "odometry_scale_left_wheel";
 constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
@@ -166,6 +167,9 @@ rcl_lifecycle_transition_key_t Raspimouse::on_configure(const rclcpp_lifecycle::
   // TODO: Switch to the below function when lifecycle nodes catch up with nodes
   //set_parameter_if_not_set(use_light_sensors_param, true);
   rclcpp::Parameter parameter;
+  if (!get_parameter(use_pulse_counters_param, parameter)) {
+    set_parameters({rclcpp::Parameter(use_pulse_counters_param, false)});
+  }
   if (!get_parameter(use_light_sensors_param, parameter)) {
     set_parameters({rclcpp::Parameter(use_light_sensors_param, true)});
   }
@@ -177,7 +181,8 @@ rcl_lifecycle_transition_key_t Raspimouse::on_configure(const rclcpp_lifecycle::
   }
   
   // Test if the pulse counters are available
-  {
+  if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
+    RCLCPP_INFO(get_logger(), "Testing counters");
     std::ifstream left_counter("/dev/rtcounter_l0");
     std::ifstream right_counter("/dev/rtcounter_r0");
     if (left_counter.is_open() && right_counter.is_open()) {
@@ -188,6 +193,8 @@ rcl_lifecycle_transition_key_t Raspimouse::on_configure(const rclcpp_lifecycle::
     } else {
       RCLCPP_INFO(get_logger(), "Pulse counters not found; using estimated odometry");
     }
+  } else {
+    RCLCPP_INFO(get_logger(), "Pulse counters disabled by parameter; using estimated odometry");
   }
 
   RCLCPP_INFO(this->get_logger(), "Configuring done");
@@ -267,17 +274,19 @@ rcl_lifecycle_transition_key_t Raspimouse::on_cleanup(const rclcpp_lifecycle::St
 
 void Raspimouse::publish_odometry()
 {
-  calculate_odometry_from_pulse_counts(
-    odom_.pose.pose.position.x,
-    odom_.pose.pose.position.y,
-    odom_theta_
-    );
-
-  estimate_odometry(
-    odom_.pose.pose.position.x,
-    odom_.pose.pose.position.y,
-    odom_theta_
-    );
+  if (use_pulse_counters_) {
+    calculate_odometry_from_pulse_counts(
+      odom_.pose.pose.position.x,
+      odom_.pose.pose.position.y,
+      odom_theta_
+      );
+  } else {
+    estimate_odometry(
+      odom_.pose.pose.position.x,
+      odom_.pose.pose.position.y,
+      odom_theta_
+      );
+  }
 
   tf2::Quaternion odom_q;
   odom_q.setRPY(0, 0, odom_theta_);
@@ -458,6 +467,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
   auto one_revolution_distance_right = 2 * M_PI * wheel_diameter *
     get_parameter(odometry_scale_right_wheel_param).get_value<double>();
 
+  RCLCPP_INFO(get_logger(), "Reading counters");
   std::ifstream left_counter("/dev/rtcounter_l0");
   std::ifstream right_counter("/dev/rtcounter_r0");
   int pulse_count_left, pulse_count_right;
@@ -509,7 +519,6 @@ void Raspimouse::estimate_odometry(double &x, double &y, double &theta)
   x += linear_velocity_ * cos(theta) * dt.nanoseconds() / 1e9;
   y += linear_velocity_ * sin(theta) * dt.nanoseconds() / 1e9;
   theta += angular_velocity_ * dt.nanoseconds() / 1e9;
-  RCLCPP_INFO(get_logger(), "Estimated: x: %f\ty: %f\ttheta: %f", x, y, theta);
 }
 
 } // namespace raspimouse
