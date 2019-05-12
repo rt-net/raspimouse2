@@ -52,7 +52,7 @@ Raspimouse::Raspimouse()
   // No construction necessary (node is uninitialised)
 }
 
-rcl_lifecycle_transition_key_t Raspimouse::on_configure(const rclcpp_lifecycle::State &)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Configuring Raspimouse node");
 
@@ -120,42 +120,42 @@ rcl_lifecycle_transition_key_t Raspimouse::on_configure(const rclcpp_lifecycle::
   power_control_ = std::make_shared<std::ofstream>("/dev/rtmotoren0");
   if (!power_control_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open motor power device /dev/rtmotoren0");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
   }
   left_motor_control_ = std::make_shared<std::ofstream>("/dev/rtmotor_raw_l0");
   if (!left_motor_control_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open left motor device /dev/rtmotor_raw_l0");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
   }
   right_motor_control_ = std::make_shared<std::ofstream>("/dev/rtmotor_raw_r0");
   if (!right_motor_control_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open right motor device /dev/rtmotor_raw_r0");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
   }
   led0_output_ = std::make_shared<std::ofstream>("/dev/rtled0");
   if (!led0_output_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open LED 0 device /dev/rtled0");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
   }
   led1_output_ = std::make_shared<std::ofstream>("/dev/rtled1");
   if (!led1_output_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open LED 1 device /dev/rtled1");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
   }
   led2_output_ = std::make_shared<std::ofstream>("/dev/rtled2");
   if (!led2_output_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open LED 2 device /dev/rtled2");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
   }
   led3_output_ = std::make_shared<std::ofstream>("/dev/rtled3");
   if (!led3_output_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open LED 3 device /dev/rtled3");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
   }
   buzzer_output_ = std::make_shared<std::ofstream>("/dev/rtbuzzer0");
   if (!buzzer_output_->is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open buzzer device /dev/rtbuzzer0");
-    return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_FAILURE;
+    return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::FAILURE;
   }
 
   // Disable motors at startup
@@ -198,10 +198,10 @@ rcl_lifecycle_transition_key_t Raspimouse::on_configure(const rclcpp_lifecycle::
   }
 
   RCLCPP_INFO(this->get_logger(), "Configuring done");
-  return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-rcl_lifecycle_transition_key_t Raspimouse::on_activate(const rclcpp_lifecycle::State &)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Raspimouse::on_activate(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Activating Raspimouse node");
 
@@ -218,10 +218,10 @@ rcl_lifecycle_transition_key_t Raspimouse::on_activate(const rclcpp_lifecycle::S
   }
 
   RCLCPP_INFO(this->get_logger(), "Raspimouse node activated");
-  return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-rcl_lifecycle_transition_key_t Raspimouse::on_deactivate(const rclcpp_lifecycle::State &)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Raspimouse::on_deactivate(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Deactivating node");
 
@@ -239,10 +239,10 @@ rcl_lifecycle_transition_key_t Raspimouse::on_deactivate(const rclcpp_lifecycle:
   // For the sake of peace and quiet, stop the buzzer
   *buzzer_output_ << 0 << std::endl;
 
-  return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
-rcl_lifecycle_transition_key_t Raspimouse::on_cleanup(const rclcpp_lifecycle::State &)
+rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn Raspimouse::on_cleanup(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Cleaning up node");
 
@@ -269,7 +269,7 @@ rcl_lifecycle_transition_key_t Raspimouse::on_cleanup(const rclcpp_lifecycle::St
   led3_output_.reset();
   buzzer_output_.reset();
 
-  return lifecycle_msgs::msg::Transition::TRANSITION_CALLBACK_SUCCESS;
+  return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
 
 void Raspimouse::publish_odometry()

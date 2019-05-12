@@ -111,10 +111,10 @@ private:
   std::shared_ptr<std::ofstream> led3_output_;
   std::shared_ptr<std::ofstream> buzzer_output_;
 
-  rcl_lifecycle_transition_key_t on_configure(const rclcpp_lifecycle::State &);
-  rcl_lifecycle_transition_key_t on_activate(const rclcpp_lifecycle::State &);
-  rcl_lifecycle_transition_key_t on_deactivate(const rclcpp_lifecycle::State &);
-  rcl_lifecycle_transition_key_t on_cleanup(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_configure(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &);
 
   void publish_odometry();
   void publish_switches();
