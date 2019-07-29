@@ -39,8 +39,8 @@ constexpr auto wheel_base = 0.09;
 namespace raspimouse
 {
 
-Raspimouse::Raspimouse()
-: rclcpp_lifecycle::LifecycleNode("raspimouse"),
+Raspimouse::Raspimouse(const rclcpp::NodeOptions &options)
+: rclcpp_lifecycle::LifecycleNode("raspimouse", options),
   odom_(rosidl_generator_cpp::MessageInitialization::ZERO),
   odom_transform_(rosidl_generator_cpp::MessageInitialization::ZERO),
   last_odom_time_(0),
@@ -64,7 +64,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   last_odom_time_ = now();
 
   // Publisher for odometry data
-  odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom");
+  odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
   odom_.child_frame_id = "base_link";
   odom_.pose.pose.position.x = 0;
   odom_.pose.pose.position.y = 0;
@@ -92,7 +92,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
 
   // Subscriber for velocity commands
   velocity_sub_ = create_subscription<geometry_msgs::msg::Twist>(
-      "cmd_vel", std::bind(&Raspimouse::velocity_command, this, _1));
+      "cmd_vel", 10, std::bind(&Raspimouse::velocity_command, this, _1));
 
   // Motor power control service
   power_service_ = create_service<std_srvs::srv::SetBool>(
@@ -102,9 +102,9 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   watchdog_timer_ = create_wall_timer(60s, std::bind(&Raspimouse::watchdog, this));
 
   // Publisher for switch states
-  switches_pub_ = this->create_publisher<raspimouse_msgs::msg::Switches>("switches");
+  switches_pub_ = this->create_publisher<raspimouse_msgs::msg::Switches>("switches", 10);
   // Publisher for light sensors
-  light_sensors_pub_ = this->create_publisher<raspimouse_msgs::msg::LightSensors>("light_sensors");
+  light_sensors_pub_ = this->create_publisher<raspimouse_msgs::msg::LightSensors>("light_sensors", 10);
   // Timer for publishing switch information
   switches_timer_ = create_wall_timer(100ms, std::bind(&Raspimouse::publish_switches, this));
   switches_timer_->cancel();
@@ -113,10 +113,10 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   light_sensors_timer_->cancel();
   // Subscriber for LED commands
   leds_sub_ = create_subscription<raspimouse_msgs::msg::Leds>(
-      "leds", std::bind(&Raspimouse::leds_command, this, _1));
+      "leds", 10, std::bind(&Raspimouse::leds_command, this, _1));
   // Subscriber for buzzer commands
   buzzer_sub_ = create_subscription<std_msgs::msg::Int16>(
-      "buzzer", std::bind(&Raspimouse::buzzer_command, this, _1));
+      "buzzer", 10, std::bind(&Raspimouse::buzzer_command, this, _1));
 
   power_control_ = std::make_shared<std::ofstream>("/dev/rtmotoren0");
   if (!power_control_->is_open()) {
@@ -165,21 +165,10 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   set_motor_power(false);
 
   // Set parameter defaults
-  // TODO: Switch to the below function when lifecycle nodes catch up with nodes
-  //set_parameter_if_not_set(use_light_sensors_param, true);
-  rclcpp::Parameter parameter;
-  if (!get_parameter(use_pulse_counters_param, parameter)) {
-    set_parameters({rclcpp::Parameter(use_pulse_counters_param, false)});
-  }
-  if (!get_parameter(use_light_sensors_param, parameter)) {
-    set_parameters({rclcpp::Parameter(use_light_sensors_param, true)});
-  }
-  if (!get_parameter(odometry_scale_left_wheel_param, parameter)) {
-    set_parameters({rclcpp::Parameter(odometry_scale_left_wheel_param, 1.0)});
-  }
-  if (!get_parameter(odometry_scale_right_wheel_param, parameter)) {
-    set_parameters({rclcpp::Parameter(odometry_scale_right_wheel_param, 1.0)});
-  }
+  declare_parameter(use_pulse_counters_param, false);
+  declare_parameter(use_light_sensors_param, true);
+  declare_parameter(odometry_scale_left_wheel_param, 1.0);
+  declare_parameter(odometry_scale_right_wheel_param, 1.0);
   
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
@@ -524,6 +513,6 @@ void Raspimouse::estimate_odometry(double &x, double &y, double &theta)
 
 } // namespace raspimouse
 
-#include <class_loader/register_macro.hpp>
+#include <rclcpp_components/register_node_macro.hpp>
 
-CLASS_LOADER_REGISTER_CLASS(raspimouse::Raspimouse, rclcpp_lifecycle::LifecycleNode)
+RCLCPP_COMPONENTS_REGISTER_NODE(raspimouse::Raspimouse)

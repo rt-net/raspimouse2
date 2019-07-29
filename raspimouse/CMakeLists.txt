@@ -13,7 +13,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
-find_package(class_loader REQUIRED)
+find_package(rclcpp_components REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -29,7 +29,7 @@ target_compile_definitions(raspimouse_component PRIVATE "RASPIMOUSE_BUILDING_DLL
 ament_target_dependencies(raspimouse_component
   rclcpp
   rclcpp_lifecycle
-  class_loader
+  rclcpp_components
   std_msgs
   std_srvs
   geometry_msgs
@@ -38,7 +38,7 @@ ament_target_dependencies(raspimouse_component
   tf2_ros
   raspimouse_msgs
   )
-rclcpp_register_node_plugins(raspimouse_component "raspimouse::Raspimouse")
+rclcpp_components_register_nodes(raspimouse_component "raspimouse::Raspimouse")
 
 add_executable(raspimouse src/raspimouse.cpp)
 target_link_libraries(raspimouse raspimouse_component)

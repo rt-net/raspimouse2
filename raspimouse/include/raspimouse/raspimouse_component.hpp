@@ -74,7 +74,7 @@ class Raspimouse : public rclcpp_lifecycle::LifecycleNode
 {
 public:
   RASPIMOUSE_PUBLIC
-  Raspimouse();
+  explicit Raspimouse(const rclcpp::NodeOptions &options);
 
 private:
   std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>> odom_pub_;
