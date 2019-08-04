@@ -20,8 +20,9 @@
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
   rclcpp::executors::SingleThreadedExecutor exe;
+  rclcpp::NodeOptions options;
   std::shared_ptr<raspimouse::Raspimouse> raspimouse_node =
-    std::make_shared<raspimouse::Raspimouse>();
+    std::make_shared<raspimouse::Raspimouse>(options);
   exe.add_node(raspimouse_node->get_node_base_interface());
   exe.spin();
   rclcpp::shutdown();
