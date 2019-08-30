@@ -77,6 +77,7 @@ public:
   explicit Raspimouse(const rclcpp::NodeOptions &options);
 
 private:
+  rclcpp::Clock ros_clock_;
   std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>> odom_pub_;
   nav_msgs::msg::Odometry odom_;
   std::shared_ptr<tf2_ros::TransformBroadcaster> odom_transform_broadcaster_;

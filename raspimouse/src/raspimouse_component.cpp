@@ -41,6 +41,7 @@ namespace raspimouse
 
 Raspimouse::Raspimouse(const rclcpp::NodeOptions &options)
 : rclcpp_lifecycle::LifecycleNode("raspimouse", options),
+  ros_clock_(RCL_ROS_TIME),
   odom_(rosidl_generator_cpp::MessageInitialization::ZERO),
   odom_transform_(rosidl_generator_cpp::MessageInitialization::ZERO),
   last_odom_time_(0),
@@ -66,6 +67,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
 
   // Publisher for odometry data
   odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
+  odom_.header.frame_id = "odom";
   odom_.child_frame_id = "base_link";
   odom_.pose.pose.position.x = 0;
   odom_.pose.pose.position.y = 0;
@@ -286,6 +288,7 @@ void Raspimouse::publish_odometry()
   odom_.pose.pose.orientation.w = odom_q.w();
   odom_.twist.twist.linear.x = linear_velocity_;
   odom_.twist.twist.angular.z = angular_velocity_;
+  odom_.header.stamp = ros_clock_.now();
   odom_pub_->publish(odom_);
 
   odom_transform_.header.stamp = last_odom_time_;
