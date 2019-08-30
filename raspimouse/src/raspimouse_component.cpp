@@ -46,6 +46,7 @@ Raspimouse::Raspimouse(const rclcpp::NodeOptions &options)
   last_odom_time_(0),
   linear_velocity_(0),
   angular_velocity_(0),
+  odom_theta_(0),
   use_pulse_counters_(false),
   last_pulse_count_left_(0),
   last_pulse_count_right_(0)
