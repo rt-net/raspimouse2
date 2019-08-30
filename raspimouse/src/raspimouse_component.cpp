@@ -46,6 +46,7 @@ Raspimouse::Raspimouse(const rclcpp::NodeOptions &options)
   last_odom_time_(0),
   linear_velocity_(0),
   angular_velocity_(0),
+  odom_theta_(0),
   use_pulse_counters_(false),
   last_pulse_count_left_(0),
   last_pulse_count_right_(0)
@@ -74,9 +75,8 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   odom_.pose.pose.orientation.w = 0;
   odom_theta_ = 0;
   // Publisher for odometry transform
-  // TODO: When the tf2 API is updated to match rclcpp, re-enable this broadcaster
-  //odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
-    //std::static_pointer_cast<rclcpp::Node>(this->shared_from_this()));
+  odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
+      this->shared_from_this());
   odom_transform_.header.frame_id = "odom";
   odom_transform_.child_frame_id = "base_link";
   odom_transform_.transform.translation.x = 0;
@@ -288,7 +288,6 @@ void Raspimouse::publish_odometry()
   odom_.twist.twist.angular.z = angular_velocity_;
   odom_pub_->publish(odom_);
 
-  /* TODO: When the tf2 API is updated to match rclcpp, re-enable this broadcaster
   odom_transform_.header.stamp = last_odom_time_;
   odom_transform_.transform.translation.x = odom_.pose.pose.position.x;
   odom_transform_.transform.translation.y = odom_.pose.pose.position.y;
@@ -296,7 +295,7 @@ void Raspimouse::publish_odometry()
   odom_transform_.transform.rotation.y = odom_q.y();
   odom_transform_.transform.rotation.z = odom_q.z();
   odom_transform_.transform.rotation.w = odom_q.w();
-  odom_transform_broadcaster_->sendTransform(odom_transform_);*/
+  odom_transform_broadcaster_->sendTransform(odom_transform_);
 }
 
 void Raspimouse::publish_switches()

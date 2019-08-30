@@ -90,7 +90,7 @@ Similarly other sensor information can also be viewed by echoing the relevant to
   Type: `raspimouse_msgs/Switches`
 
   Provides the status of each of the three push switches on the side of the robot.
-  
+
 
 ## Services
 
@@ -147,6 +147,3 @@ Similarly other sensor information can also be viewed by echoing the relevant to
   possible for reading from the pulse counters to cause the node to freeze. If this happens
   regularly, disable the hardware pulse counters using the `use_pulse_counters` parameter and
   rely on estimated odometry instead.
-
-- The necessary TF transform for use with the navivation stack is not currently publishable due to
-  missing compatibility between managed-lifecycle nodes and the `tf2` library.
