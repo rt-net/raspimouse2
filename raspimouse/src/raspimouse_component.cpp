@@ -13,7 +13,7 @@
 // limitations under the License.
 
 #include "raspimouse/raspimouse_component.hpp"
- 
+
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <chrono>
@@ -68,7 +68,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   // Publisher for odometry data
   odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
   odom_.header.frame_id = "odom";
-  odom_.child_frame_id = "base_link";
+  odom_.child_frame_id = "base_footprint";
   odom_.pose.pose.position.x = 0;
   odom_.pose.pose.position.y = 0;
   odom_.pose.pose.orientation.x = 0;
@@ -80,7 +80,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
       this->shared_from_this());
   odom_transform_.header.frame_id = "odom";
-  odom_transform_.child_frame_id = "base_link";
+  odom_transform_.child_frame_id = "base_footprint";
   odom_transform_.transform.translation.x = 0;
   odom_transform_.transform.translation.y = 0;
   odom_transform_.transform.rotation.x = 0;
@@ -171,7 +171,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(use_light_sensors_param, true);
   declare_parameter(odometry_scale_left_wheel_param, 1.0);
   declare_parameter(odometry_scale_right_wheel_param, 1.0);
-  
+
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
     RCLCPP_INFO(get_logger(), "Testing counters");
