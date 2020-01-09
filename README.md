@@ -152,6 +152,6 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
 * Geoffrey Biggs ([@gbiggs](https://github.com/gbiggs)), **original author**
 * Shota Hirama ([@shotahirama](https://github.com/shotahirama))
-* Yudaka Kondo ([@youtalk](https://github.com/youtalk))
+* Yutaka Kondo ([@youtalk](https://github.com/youtalk))
 
 Contributions are always welcome!
