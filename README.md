@@ -147,3 +147,11 @@ Similarly other sensor information can also be viewed by echoing the relevant to
   possible for reading from the pulse counters to cause the node to freeze. If this happens
   regularly, disable the hardware pulse counters using the `use_pulse_counters` parameter and
   rely on estimated odometry instead.
+
+## Contributors
+
+* Geoffrey Biggs ([@gbiggs](https://github.com/gbiggs)), **original author**
+* Shota Hirama ([@shotahirama](https://github.com/shotahirama))
+* Yutaka Kondo ([@youtalk](https://github.com/youtalk))
+
+Contributions are always welcome!
