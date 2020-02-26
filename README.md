@@ -6,7 +6,7 @@ ROS 2 node for the Raspberry Pi Mouse.
 
 - Raspberry Pi Mouse
   - https://www.rt-net.jp/products/raspimouse2
-  - [Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3419&language=en)
+  - [RT Robot Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3419&language=en)
 - Linux OS
   - Ubuntu server 18.04
   - https://wiki.ubuntu.com/ARM/RaspberryPi
