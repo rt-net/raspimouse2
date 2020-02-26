@@ -191,14 +191,6 @@ Similarly other sensor information can also be viewed by echoing the relevant to
   Use hardware pulse counters as the odometry source. When set to true, hardware pulse counters
   will be used only if present.
 
-
-## Known problems
-
-- Due to instabilities in either the hardware pulse counters or the kernel driver for them, it is
-  possible for reading from the pulse counters to cause the node to freeze. If this happens
-  regularly, disable the hardware pulse counters using the `use_pulse_counters` parameter and
-  rely on estimated odometry instead.
-
 ## License
 
 This repository is licensed under the Apache 2.0, see [LICENSE](./LICENSE) for details.
