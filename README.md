@@ -26,18 +26,20 @@ $ rosdep install -r -y --from-paths . --ignore-src
 # Build & Install
 $ cd ~/ros2_ws
 $ colcon build --symlink-install
-$ source devel.setup.bash
+$ source ~/ros2_ws/install/setup.bash
 ```
 
 ## QuickStart
 
 ```sh
 # Terminal 1
+$ source ~/ros2_ws/install/setup.bash
 $ ros2 run raspimouse raspimouse
 
 
 # Terminal 2
 # Set buzzer frequency
+$ source ~/ros2_ws/install/setup.bash
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 1000}'
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 0}'
 
