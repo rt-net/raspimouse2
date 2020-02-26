@@ -2,6 +2,8 @@
 
 ROS 2 node for the Raspberry Pi Mouse.
 
+![raspimouse](https://github.com/rt-net/raspimouse2/blob/images/raspimouse.png)
+
 ## Requirements
 
 - Raspberry Pi Mouse
