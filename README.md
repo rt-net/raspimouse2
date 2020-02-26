@@ -1,6 +1,6 @@
 # Raspimouse Node
 
-ROS 2 node for the Raspimouse robot from RT.
+ROS 2 node for the Raspberry Pi Mouse.
 
 ## Requirements
 
