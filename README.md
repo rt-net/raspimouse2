@@ -199,6 +199,10 @@ Similarly other sensor information can also be viewed by echoing the relevant to
   regularly, disable the hardware pulse counters using the `use_pulse_counters` parameter and
   rely on estimated odometry instead.
 
+## License
+
+This repository is licensed under the Apache 2.0, see [LICENSE](./LICENSE) for details.
+
 ## Contributors
 
 * Geoffrey Biggs ([@gbiggs](https://github.com/gbiggs)), **original author**
