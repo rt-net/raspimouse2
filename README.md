@@ -2,7 +2,54 @@
 
 ROS 2 node for the Raspimouse robot from RT.
 
-https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3419
+## Requirements
+
+- Raspberry Pi Mouse
+  - https://www.rt-net.jp/products/raspimouse2
+  - [Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=3419&language=en)
+- Linux OS
+  - Ubuntu server 18.04
+  - https://wiki.ubuntu.com/ARM/RaspberryPi
+- ROS
+  - [Dashing Diademata](https://index.ros.org/doc/ros2/Installation/Dashing/Linux-Install-Debians/)
+
+## Installation
+
+```sh
+$ cd ~/ros2_ws/src
+# Clone package
+$ git clone https://github.com/rt-net/raspimouse2
+
+# Install dependencies
+$ rosdep install -r -y --from-paths . --ignore-src
+
+# Build & Install
+$ cd ~/ros2_ws
+$ colcon build --symlink-install
+$ source devel.setup.bash
+```
+
+## QuickStart
+
+```sh
+# Terminal 1
+$ ros2 run raspimouse raspimouse
+
+
+# Terminal 2
+# Set buzzer frequency
+$ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 1000}'
+$ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 0}'
+
+# or rotate motors
+$ ros2 lifecycle set raspimouse configure
+$ ros2 lifecycle set raspimouse activate
+$ ros2 service call /motor_power std_srvs/SetBool '{data: true}'
+$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.05, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
+$ ros2 lifecycle set raspimouse deactivate
+```
+
+## Node Description
 
 This is a managed-lifecycle node. The node must be configured and activated after being launched
 before the robot can be used. If running the node manually, after launching the node execute the
