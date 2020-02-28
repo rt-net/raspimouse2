@@ -40,13 +40,14 @@ $ ros2 run raspimouse raspimouse
 
 
 # Terminal 2
-# Set buzzer frequency
 $ source ~/ros2_ws/install/setup.bash
+$ ros2 lifecycle set raspimouse configure
+
+# Set buzzer frequency
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 1000}'
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 0}'
 
 # or rotate motors
-$ ros2 lifecycle set raspimouse configure
 $ ros2 lifecycle set raspimouse activate
 $ ros2 service call /motor_power std_srvs/SetBool '{data: true}'
 $ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.05, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
