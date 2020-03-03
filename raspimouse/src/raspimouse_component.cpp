@@ -324,19 +324,19 @@ void Raspimouse::publish_switches()
   raspimouse_msgs::msg::Switches switch_states;
   char c;
   switch0_input >> c;
-  if (c == '0') {
+  if (c != '0') {
     switch_states.switch0 = false;
   } else {
     switch_states.switch0 = true;
   }
   switch1_input >> c;
-  if (c == '0') {
+  if (c != '0') {
     switch_states.switch1 = false;
   } else {
     switch_states.switch1 = true;
   }
   switch2_input >> c;
-  if (c == '0') {
+  if (c != '0') {
     switch_states.switch2 = false;
   } else {
     switch_states.switch2 = true;
