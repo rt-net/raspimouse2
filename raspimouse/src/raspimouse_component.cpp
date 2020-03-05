@@ -500,6 +500,8 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
   y += average_distance * sin(theta);
 
   RCLCPP_INFO(get_logger(), "Counter: x: %f\ty: %f\ttheta: %f", x, y, theta);
+
+  last_odom_time_ = now();
 }
 
 void Raspimouse::estimate_odometry(double &x, double &y, double &theta)
