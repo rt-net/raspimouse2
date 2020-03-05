@@ -325,21 +325,21 @@ void Raspimouse::publish_switches()
   char c;
   switch0_input >> c;
   if (c == '0') {
-    switch_states.switch0 = false;
-  } else {
     switch_states.switch0 = true;
+  } else {
+    switch_states.switch0 = false;
   }
   switch1_input >> c;
   if (c == '0') {
-    switch_states.switch1 = false;
-  } else {
     switch_states.switch1 = true;
+  } else {
+    switch_states.switch1 = false;
   }
   switch2_input >> c;
   if (c == '0') {
-    switch_states.switch2 = false;
-  } else {
     switch_states.switch2 = true;
+  } else {
+    switch_states.switch2 = false;
   }
   switches_pub_->publish(switch_states);
 }
