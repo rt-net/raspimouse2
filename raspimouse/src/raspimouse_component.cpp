@@ -21,9 +21,9 @@
 #include <functional>
 #include <limits>
 #include <memory>
-#include <rclcpp/rclcpp.hpp>
-#include <rosidl_generator_cpp/message_initialization.hpp>
-#include <lifecycle_msgs/msg/transition.hpp>
+#include "rclcpp/rclcpp.hpp"
+#include "rosidl_generator_cpp/message_initialization.hpp"
+#include "lifecycle_msgs/msg/transition.hpp"
 
 using namespace std::chrono_literals;
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
@@ -106,12 +106,15 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   // Publisher for switch states
   switches_pub_ = this->create_publisher<raspimouse_msgs::msg::Switches>("switches", 10);
   // Publisher for light sensors
-  light_sensors_pub_ = this->create_publisher<raspimouse_msgs::msg::LightSensors>("light_sensors", 10);
+  light_sensors_pub_ = this->create_publisher<raspimouse_msgs::msg::LightSensors>(
+    "light_sensors", 10);
   // Timer for publishing switch information
-  switches_timer_ = create_wall_timer(100ms, std::bind(&Raspimouse::publish_switches, this));
+  switches_timer_ = create_wall_timer(100ms, std::bind(
+    &Raspimouse::publish_switches, this));
   switches_timer_->cancel();
   // Timer for publishing light sensor information
-  light_sensors_timer_ = create_wall_timer(100ms, std::bind(&Raspimouse::publish_light_sensors, this));
+  light_sensors_timer_ = create_wall_timer(100ms, std::bind(
+    &Raspimouse::publish_light_sensors, this));
   light_sensors_timer_->cancel();
   // Subscriber for LED commands
   leds_sub_ = create_subscription<raspimouse_msgs::msg::Leds>(
@@ -306,19 +309,19 @@ void Raspimouse::publish_switches()
   std::ifstream switch0_input("/dev/rtswitch0");
   if (!switch0_input.is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open switch 0 device /dev/rtswitch0");
-    // TODO: Error state transition
+    // TODO(ShotaAk): Error state transition
     return;
   }
   std::ifstream switch1_input("/dev/rtswitch1");
   if (!switch1_input.is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open switch 1 device /dev/rtswitch1");
-    // TODO: Error state transition
+    // TODO(ShotaAk): Error state transition
     return;
   }
   std::ifstream switch2_input("/dev/rtswitch2");
   if (!switch2_input.is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open switch 2 device /dev/rtswitch2");
-    // TODO: Error state transition
+    // TODO(ShotaAk): Error state transition
     return;
   }
   raspimouse_msgs::msg::Switches switch_states;
@@ -349,7 +352,7 @@ void Raspimouse::publish_light_sensors()
   std::ifstream light_sensors_input("/dev/rtlightsensor0");
   if (!light_sensors_input.is_open()) {
     RCLCPP_ERROR(get_logger(), "Failed to open light sensors device /dev/rtlightsensor0");
-    // TODO: Error state transition
+    // TODO(ShotaAk): Error state transition
     return;
   }
   raspimouse_msgs::msg::LightSensors sensor_values;
@@ -465,7 +468,8 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
   int pulse_count_left, pulse_count_right;
   left_counter >> pulse_count_left;
   right_counter >> pulse_count_right;
-  RCLCPP_INFO(get_logger(), "Old: %d, %d\tNew: %d, %d", last_pulse_count_left_, last_pulse_count_right_, pulse_count_left, pulse_count_right);
+  RCLCPP_INFO(get_logger(), "Old: %d, %d\tNew: %d, %d", last_pulse_count_left_,
+  last_pulse_count_right_, pulse_count_left, pulse_count_right);
 
   // Account for rollover
   int pulse_count_difference_left(0), pulse_count_difference_right(0);
@@ -479,7 +483,8 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
   } else {
     pulse_count_difference_right = pulse_count_right - last_pulse_count_right_;
   }
-  RCLCPP_INFO(get_logger(), "Pulse differences: %d, %d", pulse_count_difference_left, pulse_count_difference_right);
+  RCLCPP_INFO(get_logger(), "Pulse differences: %d, %d", pulse_count_difference_left,
+  pulse_count_difference_right);
 
   // Calculate number of revolutions since last time
   // 400 pulses per revolution
@@ -490,7 +495,8 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
   auto left_distance = left_revolutions * one_revolution_distance_left;
   auto right_distance = right_revolutions * one_revolution_distance_right;
   auto average_distance = (right_distance - left_distance) / 2;
-  RCLCPP_INFO(get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f", left_distance, right_distance, average_distance);
+  RCLCPP_INFO(get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
+  left_distance, right_distance, average_distance);
 
   last_pulse_count_left_ = pulse_count_left;
   last_pulse_count_right_ = pulse_count_right;
@@ -515,8 +521,8 @@ void Raspimouse::estimate_odometry(double &x, double &y, double &theta)
   theta += angular_velocity_ * dt.nanoseconds() / 1e9;
 }
 
-} // namespace raspimouse
+}  // namespace raspimouse
 
-#include <rclcpp_components/register_node_macro.hpp>
+#include "rclcpp_components/register_node_macro.hpp"
 
 RCLCPP_COMPONENTS_REGISTER_NODE(raspimouse::Raspimouse)
