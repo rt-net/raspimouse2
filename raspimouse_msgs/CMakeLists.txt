@@ -16,8 +16,7 @@ find_package(rosidl_default_generators REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Leds.msg"
   "msg/Switches.msg"
-  "msg/LightSensors.msg"
-  )
+  "msg/LightSensors.msg")
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

@@ -36,8 +36,7 @@ ament_target_dependencies(raspimouse_component
   nav_msgs
   tf2
   tf2_ros
-  raspimouse_msgs
-  )
+  raspimouse_msgs)
 rclcpp_components_register_nodes(raspimouse_component "raspimouse::Raspimouse")
 
 add_executable(raspimouse src/raspimouse.cpp)
@@ -52,8 +51,7 @@ ament_target_dependencies(raspimouse
   nav_msgs
   tf2
   tf2_ros
-  raspimouse_msgs
-  )
+  raspimouse_msgs)
 
 install(TARGETS
   raspimouse_component
