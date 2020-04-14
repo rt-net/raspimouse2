@@ -76,12 +76,12 @@ class Raspimouse : public rclcpp_lifecycle::LifecycleNode
 {
 public:
   RASPIMOUSE_PUBLIC
-  explicit Raspimouse(const rclcpp::NodeOptions &options);
+  explicit Raspimouse(const rclcpp::NodeOptions & options);
 
 private:
   rclcpp::Clock ros_clock_;
   std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>>
-    odom_pub_;
+  odom_pub_;
   nav_msgs::msg::Odometry odom_;
   std::shared_ptr<tf2_ros::TransformBroadcaster> odom_transform_broadcaster_;
   geometry_msgs::msg::TransformStamped odom_transform_;
@@ -103,9 +103,9 @@ private:
   std::shared_ptr<std::ofstream> right_motor_control_;
 
   std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<
-    raspimouse_msgs::msg::Switches>> switches_pub_;
+      raspimouse_msgs::msg::Switches>> switches_pub_;
   std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<
-    raspimouse_msgs::msg::LightSensors>> light_sensors_pub_;
+      raspimouse_msgs::msg::LightSensors>> light_sensors_pub_;
   rclcpp::Subscription<raspimouse_msgs::msg::Leds>::SharedPtr leds_sub_;
   rclcpp::Subscription<std_msgs::msg::Int16>::SharedPtr buzzer_sub_;
   rclcpp::TimerBase::SharedPtr switches_timer_;
@@ -118,13 +118,13 @@ private:
   std::shared_ptr<std::ofstream> buzzer_output_;
 
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-    on_configure(const rclcpp_lifecycle::State &);
+  on_configure(const rclcpp_lifecycle::State &);
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-    on_activate(const rclcpp_lifecycle::State &);
+  on_activate(const rclcpp_lifecycle::State &);
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-    on_deactivate(const rclcpp_lifecycle::State &);
+  on_deactivate(const rclcpp_lifecycle::State &);
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
-    on_cleanup(const rclcpp_lifecycle::State &);
+  on_cleanup(const rclcpp_lifecycle::State &);
 
   void publish_odometry();
   void publish_switches();
@@ -135,14 +135,14 @@ private:
   void buzzer_command(const std_msgs::msg::Int16::SharedPtr msg);
 
   void handle_motor_power(
-      const std::shared_ptr<rmw_request_id_t> request_header,
-      const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
-      const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+    const std::shared_ptr<rmw_request_id_t> request_header,
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    const std::shared_ptr<std_srvs::srv::SetBool::Response> response);
   void watchdog();
   void set_motor_power(bool value);
   void stop_motors();
-  void calculate_odometry_from_pulse_counts(double &x, double &y, double &theta);
-  void estimate_odometry(double &x, double &y, double &theta);
+  void calculate_odometry_from_pulse_counts(double & x, double & y, double & theta);
+  void estimate_odometry(double & x, double & y, double & theta);
 };
 
 }  // namespace raspimouse
