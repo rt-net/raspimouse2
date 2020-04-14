@@ -50,7 +50,7 @@ extern "C" {
 #endif
 
 #if __cplusplus
-} // extern "C"
+}  // extern "C"
 #endif
 
 #include <rclcpp/rclcpp.hpp>
@@ -67,6 +67,8 @@ extern "C" {
 #include <raspimouse_msgs/msg/switches.hpp>
 #include <raspimouse_msgs/msg/light_sensors.hpp>
 
+#include <memory>
+
 namespace raspimouse
 {
 
@@ -78,7 +80,8 @@ public:
 
 private:
   rclcpp::Clock ros_clock_;
-  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>> odom_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<nav_msgs::msg::Odometry>>
+    odom_pub_;
   nav_msgs::msg::Odometry odom_;
   std::shared_ptr<tf2_ros::TransformBroadcaster> odom_transform_broadcaster_;
   geometry_msgs::msg::TransformStamped odom_transform_;
@@ -99,8 +102,10 @@ private:
   std::shared_ptr<std::ofstream> left_motor_control_;
   std::shared_ptr<std::ofstream> right_motor_control_;
 
-  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<raspimouse_msgs::msg::Switches>> switches_pub_;
-  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<raspimouse_msgs::msg::LightSensors>> light_sensors_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<
+    raspimouse_msgs::msg::Switches>> switches_pub_;
+  std::shared_ptr<rclcpp_lifecycle::LifecyclePublisher<
+    raspimouse_msgs::msg::LightSensors>> light_sensors_pub_;
   rclcpp::Subscription<raspimouse_msgs::msg::Leds>::SharedPtr leds_sub_;
   rclcpp::Subscription<std_msgs::msg::Int16>::SharedPtr buzzer_sub_;
   rclcpp::TimerBase::SharedPtr switches_timer_;
@@ -112,10 +117,14 @@ private:
   std::shared_ptr<std::ofstream> led3_output_;
   std::shared_ptr<std::ofstream> buzzer_output_;
 
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_configure(const rclcpp_lifecycle::State &);
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_activate(const rclcpp_lifecycle::State &);
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_deactivate(const rclcpp_lifecycle::State &);
-  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn on_cleanup(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_configure(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_activate(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_deactivate(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+    on_cleanup(const rclcpp_lifecycle::State &);
 
   void publish_odometry();
   void publish_switches();
@@ -136,6 +145,6 @@ private:
   void estimate_odometry(double &x, double &y, double &theta);
 };
 
-} // namespace raspimouse
+}  // namespace raspimouse
 
-#endif // RASPIMOUSE__RASPIMOUSE_COMPONENT_HPP_
+#endif  // RASPIMOUSE__RASPIMOUSE_COMPONENT_HPP_
