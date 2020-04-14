@@ -1,4 +1,5 @@
 # Raspimouse Node
+![industrial_ci](https://github.com/rt-net/raspimouse2/workflows/industrial_ci/badge.svg?branch=master)
 
 ROS 2 node for the Raspberry Pi Mouse.
 
