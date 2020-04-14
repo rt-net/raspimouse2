@@ -39,7 +39,7 @@ constexpr auto wheel_base = 0.09;
 namespace raspimouse
 {
 
-Raspimouse::Raspimouse(const rclcpp::NodeOptions &options)
+Raspimouse::Raspimouse(const rclcpp::NodeOptions & options)
 : rclcpp_lifecycle::LifecycleNode("raspimouse", options),
   ros_clock_(RCL_ROS_TIME),
   odom_(rosidl_generator_cpp::MessageInitialization::ZERO),
@@ -78,7 +78,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   odom_theta_ = 0;
   // Publisher for odometry transform
   odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
-      this->shared_from_this());
+    this->shared_from_this());
   odom_transform_.header.frame_id = "odom";
   odom_transform_.child_frame_id = "base_footprint";
   odom_transform_.transform.translation.x = 0;
@@ -94,11 +94,11 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
 
   // Subscriber for velocity commands
   velocity_sub_ = create_subscription<geometry_msgs::msg::Twist>(
-      "cmd_vel", 10, std::bind(&Raspimouse::velocity_command, this, _1));
+    "cmd_vel", 10, std::bind(&Raspimouse::velocity_command, this, _1));
 
   // Motor power control service
   power_service_ = create_service<std_srvs::srv::SetBool>(
-      "motor_power", std::bind(&Raspimouse::handle_motor_power, this, _1, _2, _3));
+    "motor_power", std::bind(&Raspimouse::handle_motor_power, this, _1, _2, _3));
 
   // Watchdog timer to prevent out-of-control robots
   watchdog_timer_ = create_wall_timer(60s, std::bind(&Raspimouse::watchdog, this));
@@ -110,18 +110,18 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
     "light_sensors", 10);
   // Timer for publishing switch information
   switches_timer_ = create_wall_timer(100ms, std::bind(
-    &Raspimouse::publish_switches, this));
+        &Raspimouse::publish_switches, this));
   switches_timer_->cancel();
   // Timer for publishing light sensor information
   light_sensors_timer_ = create_wall_timer(100ms, std::bind(
-    &Raspimouse::publish_light_sensors, this));
+        &Raspimouse::publish_light_sensors, this));
   light_sensors_timer_->cancel();
   // Subscriber for LED commands
   leds_sub_ = create_subscription<raspimouse_msgs::msg::Leds>(
-      "leds", 10, std::bind(&Raspimouse::leds_command, this, _1));
+    "leds", 10, std::bind(&Raspimouse::leds_command, this, _1));
   // Subscriber for buzzer commands
   buzzer_sub_ = create_subscription<std_msgs::msg::Int16>(
-      "buzzer", 10, std::bind(&Raspimouse::buzzer_command, this, _1));
+    "buzzer", 10, std::bind(&Raspimouse::buzzer_command, this, _1));
 
   power_control_ = std::make_shared<std::ofstream>("/dev/rtmotoren0");
   if (!power_control_->is_open()) {
@@ -274,13 +274,13 @@ void Raspimouse::publish_odometry()
       odom_.pose.pose.position.x,
       odom_.pose.pose.position.y,
       odom_theta_
-      );
+    );
   } else {
     estimate_odometry(
       odom_.pose.pose.position.x,
       odom_.pose.pose.position.y,
       odom_theta_
-      );
+    );
   }
 
   tf2::Quaternion odom_q;
@@ -356,10 +356,10 @@ void Raspimouse::publish_light_sensors()
     return;
   }
   raspimouse_msgs::msg::LightSensors sensor_values;
-  light_sensors_input >> sensor_values.forward_r
-    >> sensor_values.right
-    >> sensor_values.left
-    >> sensor_values.forward_l;
+  light_sensors_input >> sensor_values.forward_r >>
+  sensor_values.right >>
+  sensor_values.left >>
+  sensor_values.forward_l;
   light_sensors_pub_->publish(sensor_values);
 }
 
@@ -410,9 +410,9 @@ void Raspimouse::buzzer_command(const std_msgs::msg::Int16::SharedPtr msg)
 }
 
 void Raspimouse::handle_motor_power(
-    const std::shared_ptr<rmw_request_id_t> request_header,
-    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
-    const std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+  const std::shared_ptr<rmw_request_id_t> request_header,
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  const std::shared_ptr<std_srvs::srv::SetBool::Response> response)
 {
   (void)request_header;
   set_motor_power(request->data);
@@ -455,7 +455,7 @@ void Raspimouse::stop_motors()
   *right_motor_control_ << 0 << std::endl;
 }
 
-void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, double &theta)
+void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, double & theta)
 {
   auto one_revolution_distance_left = 2 * M_PI * wheel_diameter *
     get_parameter(odometry_scale_left_wheel_param).get_value<double>();
@@ -469,7 +469,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
   left_counter >> pulse_count_left;
   right_counter >> pulse_count_right;
   RCLCPP_INFO(get_logger(), "Old: %d, %d\tNew: %d, %d", last_pulse_count_left_,
-  last_pulse_count_right_, pulse_count_left, pulse_count_right);
+    last_pulse_count_right_, pulse_count_left, pulse_count_right);
 
   // Account for rollover
   int pulse_count_difference_left(0), pulse_count_difference_right(0);
@@ -484,7 +484,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
     pulse_count_difference_right = pulse_count_right - last_pulse_count_right_;
   }
   RCLCPP_INFO(get_logger(), "Pulse differences: %d, %d", pulse_count_difference_left,
-  pulse_count_difference_right);
+    pulse_count_difference_right);
 
   // Calculate number of revolutions since last time
   // 400 pulses per revolution
@@ -496,7 +496,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
   auto right_distance = right_revolutions * one_revolution_distance_right;
   auto average_distance = (right_distance - left_distance) / 2;
   RCLCPP_INFO(get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
-  left_distance, right_distance, average_distance);
+    left_distance, right_distance, average_distance);
 
   last_pulse_count_left_ = pulse_count_left;
   last_pulse_count_right_ = pulse_count_right;
@@ -510,7 +510,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double &x, double &y, doub
   last_odom_time_ = now();
 }
 
-void Raspimouse::estimate_odometry(double &x, double &y, double &theta)
+void Raspimouse::estimate_odometry(double & x, double & y, double & theta)
 {
   auto old_last_odom_time = last_odom_time_;
   last_odom_time_ = now();
