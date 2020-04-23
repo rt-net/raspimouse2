@@ -35,6 +35,10 @@ constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
 constexpr auto wheel_diameter = 0.048;
 constexpr auto wheel_base = 0.09;
+constexpr auto PULSES_PER_REVOLUTION = 400.0;
+
+constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
+constexpr auto DEVFILE_COUNTER_R = "/dev/rtcounter_r1";
 
 namespace raspimouse
 {
@@ -88,7 +92,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   odom_transform_.transform.rotation.z = 0;
   odom_transform_.transform.rotation.w = 0;
   // Timer for providing the odometry data
-  odom_timer_ = create_wall_timer(100ms, std::bind(&Raspimouse::publish_odometry, this));
+  odom_timer_ = create_wall_timer(10ms, std::bind(&Raspimouse::publish_odometry, this));
   // Don't actually start publishing odometry data until activated
   odom_timer_->cancel();
 
@@ -178,8 +182,8 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
     RCLCPP_INFO(get_logger(), "Testing counters");
-    std::ifstream left_counter("/dev/rtcounter_l0");
-    std::ifstream right_counter("/dev/rtcounter_r0");
+    std::ifstream left_counter(DEVFILE_COUNTER_L);
+    std::ifstream right_counter(DEVFILE_COUNTER_R);
     if (left_counter.is_open() && right_counter.is_open()) {
       RCLCPP_INFO(get_logger(), "Using pulse counters for odometry");
       use_pulse_counters_ = true;
@@ -457,57 +461,54 @@ void Raspimouse::stop_motors()
 
 void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, double & theta)
 {
-  auto one_revolution_distance_left = 2 * M_PI * wheel_diameter *
+  auto one_revolution_distance_left = M_PI * wheel_diameter *
     get_parameter(odometry_scale_left_wheel_param).get_value<double>();
-  auto one_revolution_distance_right = 2 * M_PI * wheel_diameter *
+  auto one_revolution_distance_right = M_PI * wheel_diameter *
     get_parameter(odometry_scale_right_wheel_param).get_value<double>();
 
   RCLCPP_INFO(get_logger(), "Reading counters");
-  std::ifstream left_counter("/dev/rtcounter_l0");
-  std::ifstream right_counter("/dev/rtcounter_r0");
+  std::ifstream left_counter(DEVFILE_COUNTER_L);
+  std::ifstream right_counter(DEVFILE_COUNTER_R);
   int pulse_count_left, pulse_count_right;
   left_counter >> pulse_count_left;
   right_counter >> pulse_count_right;
   RCLCPP_INFO(get_logger(), "Old: %d, %d\tNew: %d, %d", last_pulse_count_left_,
     last_pulse_count_right_, pulse_count_left, pulse_count_right);
 
-  // Account for rollover
-  int pulse_count_difference_left(0), pulse_count_difference_right(0);
-  if (pulse_count_left < last_pulse_count_left_) {
-    pulse_count_difference_left = (65535 - last_pulse_count_left_) + pulse_count_left;
-  } else {
-    pulse_count_difference_left = pulse_count_left - last_pulse_count_left_;
+  int pulse_count_difference_left = pulse_count_left - last_pulse_count_left_;
+  int pulse_count_difference_right = pulse_count_right - last_pulse_count_right_;
+
+  last_pulse_count_left_ = pulse_count_left;
+  last_pulse_count_right_ = pulse_count_right;
+  last_odom_time_ = now();
+
+  // Detect overflow/underflow
+  constexpr auto OVERFLOW_THRESHOLD = 2.0 * PULSES_PER_REVOLUTION;
+  if (fabs(pulse_count_difference_left) > OVERFLOW_THRESHOLD ||
+    fabs(pulse_count_difference_right) > OVERFLOW_THRESHOLD)
+  {
+    return;
   }
-  if (pulse_count_right < last_pulse_count_right_) {
-    pulse_count_difference_right = (65535 - last_pulse_count_right_) + pulse_count_right;
-  } else {
-    pulse_count_difference_right = pulse_count_right - last_pulse_count_right_;
-  }
+
   RCLCPP_INFO(get_logger(), "Pulse differences: %d, %d", pulse_count_difference_left,
     pulse_count_difference_right);
 
   // Calculate number of revolutions since last time
-  // 400 pulses per revolution
-  auto left_revolutions = pulse_count_difference_left / 400.0;
-  auto right_revolutions = pulse_count_difference_right / 400.0;
+  auto left_revolutions = pulse_count_difference_left / PULSES_PER_REVOLUTION;
+  auto right_revolutions = pulse_count_difference_right / PULSES_PER_REVOLUTION;
   RCLCPP_INFO(get_logger(), "Revolutions: %f, %f", left_revolutions, right_revolutions);
   // Calculate the distance the wheel has travelled (ignoring slip)
   auto left_distance = left_revolutions * one_revolution_distance_left;
   auto right_distance = right_revolutions * one_revolution_distance_right;
-  auto average_distance = (right_distance - left_distance) / 2;
+  auto average_distance = (right_distance + left_distance) / 2;
   RCLCPP_INFO(get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
     left_distance, right_distance, average_distance);
-
-  last_pulse_count_left_ = pulse_count_left;
-  last_pulse_count_right_ = pulse_count_right;
 
   theta += atan2(right_distance - left_distance, wheel_base);
   x += average_distance * cos(theta);
   y += average_distance * sin(theta);
 
   RCLCPP_INFO(get_logger(), "Counter: x: %f\ty: %f\ttheta: %f", x, y, theta);
-
-  last_odom_time_ = now();
 }
 
 void Raspimouse::estimate_odometry(double & x, double & y, double & theta)
