@@ -466,13 +466,13 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
   auto one_revolution_distance_right = M_PI * wheel_diameter *
     get_parameter(odometry_scale_right_wheel_param).get_value<double>();
 
-  RCLCPP_INFO(get_logger(), "Reading counters");
+  RCLCPP_DEBUG(get_logger(), "Reading counters");
   std::ifstream left_counter(DEVFILE_COUNTER_L);
   std::ifstream right_counter(DEVFILE_COUNTER_R);
   int pulse_count_left, pulse_count_right;
   left_counter >> pulse_count_left;
   right_counter >> pulse_count_right;
-  RCLCPP_INFO(get_logger(), "Old: %d, %d\tNew: %d, %d", last_pulse_count_left_,
+  RCLCPP_DEBUG(get_logger(), "Old: %d, %d\tNew: %d, %d", last_pulse_count_left_,
     last_pulse_count_right_, pulse_count_left, pulse_count_right);
 
   int pulse_count_difference_left = pulse_count_left - last_pulse_count_left_;
@@ -490,25 +490,25 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
     return;
   }
 
-  RCLCPP_INFO(get_logger(), "Pulse differences: %d, %d", pulse_count_difference_left,
+  RCLCPP_DEBUG(get_logger(), "Pulse differences: %d, %d", pulse_count_difference_left,
     pulse_count_difference_right);
 
   // Calculate number of revolutions since last time
   auto left_revolutions = pulse_count_difference_left / PULSES_PER_REVOLUTION;
   auto right_revolutions = pulse_count_difference_right / PULSES_PER_REVOLUTION;
-  RCLCPP_INFO(get_logger(), "Revolutions: %f, %f", left_revolutions, right_revolutions);
+  RCLCPP_DEBUG(get_logger(), "Revolutions: %f, %f", left_revolutions, right_revolutions);
   // Calculate the distance the wheel has travelled (ignoring slip)
   auto left_distance = left_revolutions * one_revolution_distance_left;
   auto right_distance = right_revolutions * one_revolution_distance_right;
   auto average_distance = (right_distance + left_distance) / 2;
-  RCLCPP_INFO(get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
+  RCLCPP_DEBUG(get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
     left_distance, right_distance, average_distance);
 
   theta += atan2(right_distance - left_distance, wheel_base);
   x += average_distance * cos(theta);
   y += average_distance * sin(theta);
 
-  RCLCPP_INFO(get_logger(), "Counter: x: %f\ty: %f\ttheta: %f", x, y, theta);
+  RCLCPP_DEBUG(get_logger(), "Counter: x: %f\ty: %f\ttheta: %f", x, y, theta);
 }
 
 void Raspimouse::estimate_odometry(double & x, double & y, double & theta)
