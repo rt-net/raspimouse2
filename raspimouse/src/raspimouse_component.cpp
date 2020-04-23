@@ -92,7 +92,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   odom_transform_.transform.rotation.z = 0;
   odom_transform_.transform.rotation.w = 0;
   // Timer for providing the odometry data
-  odom_timer_ = create_wall_timer(10ms, std::bind(&Raspimouse::publish_odometry, this));
+  odom_timer_ = create_wall_timer(100ms, std::bind(&Raspimouse::publish_odometry, this));
   // Don't actually start publishing odometry data until activated
   odom_timer_->cancel();
 
