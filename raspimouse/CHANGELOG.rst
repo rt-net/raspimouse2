@@ -2,8 +2,8 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2020-05-21)
+------------------
 * Change pulse counter for calculating odometry accurately (`#16 <https://github.com/rt-net/raspimouse2/issues/16>`_)
 * Add lint check (`#14 <https://github.com/rt-net/raspimouse2/issues/14>`_)
   * Add ament_lint_auto

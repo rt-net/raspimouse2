@@ -2,8 +2,8 @@
 Changelog for package raspimouse_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.2.0 (2020-05-21)
+------------------
 * Add lint check (`#14 <https://github.com/rt-net/raspimouse2/issues/14>`_)
   * Add ament_lint_auto
   * Fix package.xml for xmllint
