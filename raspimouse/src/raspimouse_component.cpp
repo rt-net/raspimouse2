@@ -59,6 +59,11 @@ Raspimouse::Raspimouse(const rclcpp::NodeOptions & options)
   // No construction necessary (node is uninitialised)
 }
 
+Raspimouse::~Raspimouse(void)
+{
+  set_motor_power(false);
+}
+
 CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Configuring Raspimouse node");
@@ -245,6 +250,7 @@ CallbackReturn Raspimouse::on_cleanup(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Cleaning up node");
 
+  set_motor_power(false);
   release_pointers();
 
   return CallbackReturn::SUCCESS;
@@ -254,6 +260,7 @@ CallbackReturn Raspimouse::on_shutdown(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Shutting down node");
 
+  set_motor_power(false);
   release_pointers();
 
   return CallbackReturn::SUCCESS;

@@ -77,6 +77,7 @@ class Raspimouse : public rclcpp_lifecycle::LifecycleNode
 public:
   RASPIMOUSE_PUBLIC
   explicit Raspimouse(const rclcpp::NodeOptions & options);
+  ~Raspimouse(void);
 
 private:
   rclcpp::Clock ros_clock_;
