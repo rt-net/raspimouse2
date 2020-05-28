@@ -26,7 +26,7 @@ $ cd ~/ros2_ws/src
 $ git clone https://github.com/rt-net/raspimouse2
 
 # Install dependencies
-$ rosdep install -r -y --from-paths . --ignore-src
+$ rosdep install -r -y -i --from-paths .
 
 # Build & Install
 $ cd ~/ros2_ws
