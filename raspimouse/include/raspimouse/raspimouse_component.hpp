@@ -77,6 +77,7 @@ class Raspimouse : public rclcpp_lifecycle::LifecycleNode
 public:
   RASPIMOUSE_PUBLIC
   explicit Raspimouse(const rclcpp::NodeOptions & options);
+  ~Raspimouse(void);
 
 private:
   rclcpp::Clock ros_clock_;
@@ -125,7 +126,10 @@ private:
   on_deactivate(const rclcpp_lifecycle::State &);
   rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
   on_cleanup(const rclcpp_lifecycle::State &);
+  rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn
+  on_shutdown(const rclcpp_lifecycle::State &);
 
+  void release_pointers();
   void publish_odometry();
   void publish_switches();
   void publish_light_sensors();

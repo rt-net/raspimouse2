@@ -59,6 +59,11 @@ Raspimouse::Raspimouse(const rclcpp::NodeOptions & options)
   // No construction necessary (node is uninitialised)
 }
 
+Raspimouse::~Raspimouse(void)
+{
+  set_motor_power(false);
+}
+
 CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Configuring Raspimouse node");
@@ -245,6 +250,24 @@ CallbackReturn Raspimouse::on_cleanup(const rclcpp_lifecycle::State &)
 {
   RCLCPP_INFO(this->get_logger(), "Cleaning up node");
 
+  set_motor_power(false);
+  release_pointers();
+
+  return CallbackReturn::SUCCESS;
+}
+
+CallbackReturn Raspimouse::on_shutdown(const rclcpp_lifecycle::State &)
+{
+  RCLCPP_INFO(this->get_logger(), "Shutting down node");
+
+  set_motor_power(false);
+  release_pointers();
+
+  return CallbackReturn::SUCCESS;
+}
+
+void Raspimouse::release_pointers()
+{
   odom_pub_.reset();
   odom_transform_broadcaster_.reset();
   odom_timer_.reset();
@@ -267,8 +290,6 @@ CallbackReturn Raspimouse::on_cleanup(const rclcpp_lifecycle::State &)
   led2_output_.reset();
   led3_output_.reset();
   buzzer_output_.reset();
-
-  return CallbackReturn::SUCCESS;
 }
 
 void Raspimouse::publish_odometry()
