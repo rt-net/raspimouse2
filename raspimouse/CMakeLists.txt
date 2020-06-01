@@ -53,11 +53,35 @@ ament_target_dependencies(raspimouse
   tf2_ros
   raspimouse_msgs)
 
-install(TARGETS
-  raspimouse_component
+ament_export_interfaces(export_raspimouse_component HAS_LIBRARY_TARGET)
+
+ament_export_dependencies(rosidl_default_runtime)
+ament_export_dependencies(rclcpp)
+ament_export_dependencies(rclcpp_lifecycle)
+ament_export_dependencies(rclcpp_components)
+ament_export_dependencies(std_msgs)
+ament_export_dependencies(std_srvs)
+ament_export_dependencies(geometry_msgs)
+ament_export_dependencies(nav_msgs)
+ament_export_dependencies(tf2)
+ament_export_dependencies(tf2_ros)
+ament_export_dependencies(raspimouse_msgs)
+
+ament_export_include_directories(include)
+ament_export_libraries(raspimouse_component)
+
+install(
+  DIRECTORY include/
+  DESTINATION include
+)
+
+install(
+  TARGETS raspimouse_component
+  EXPORT export_raspimouse_component
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
-  RUNTIME DESTINATION bin)
+  RUNTIME DESTINATION bin
+  INCLUDES DESTINATION include)
 install(TARGETS
   raspimouse
   DESTINATION lib/${PROJECT_NAME})
@@ -67,5 +91,4 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-ament_export_dependencies(rosidl_default_runtime)
 ament_package()
