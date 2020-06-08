@@ -2,8 +2,8 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2020-06-08)
+------------------
 * Update CMakeLists.txt for exporting include dir (`#21 <https://github.com/rt-net/raspimouse2/issues/21>`_)
   * Install include dir and add dependencies for export
   * update
