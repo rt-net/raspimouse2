@@ -2,10 +2,16 @@
 Changelog for package raspimouse_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.2.0 (2020-05-21)
-------------------
-* Add lint check (`#14 <https://github.com/rt-net/raspimouse2/issues/14>`_)
+Forthcoming
+-----------
 
+0.2.0 (2020-05-22)
+------------------
+* Release 0.2.0 (`#18 <https://github.com/rt-net/raspimouse2/issues/18>`_)
+  * Add CHANGELOG
+  * 0.2.0
+  * Fix indent
+* Add lint check (`#14 <https://github.com/rt-net/raspimouse2/issues/14>`_)
   * Add ament_lint_auto
   * Fix package.xml for xmllint
   * Fix CMakeLists for cmake_lint
@@ -16,9 +22,7 @@ Changelog for package raspimouse_msgs
   * fix raspimouse.cpp for uncrustify
   * Update README.md
 * Adding sensors
-* Contributors: Geoffrey Biggs, Shota Aoki
+* Contributors: Daisuke Sato, Geoffrey Biggs, Shota Aoki
 
 0.1.0 (2018-09-07)
 ------------------
-* Initial commit
-* Contributors: Geoffrey Biggs
