@@ -4,7 +4,8 @@
   <name>raspimouse</name>
   <version>1.0.0</version>
   <description>RaspiMouse ROS 2 node</description>
-  <maintainer email="git@killbots.net">Geoffrey Biggs</maintainer>
+  <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
+  <author email="git@killbots.net">Geoffrey Biggs</author>
   <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
