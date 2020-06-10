@@ -9,7 +9,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
       - name: Add tag
-        if: startsWith(github.event.pull_request.title, 'Release')
+        if: startsWith(github.event.pull_request.title, 'Release') && github.event.pull_request.merged == true
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
