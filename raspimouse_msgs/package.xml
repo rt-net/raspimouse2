@@ -4,8 +4,10 @@
   <name>raspimouse_msgs</name>
   <version>1.0.0</version>
   <description>RaspiMouse messages</description>
-  <maintainer email="git@killbots.net">Geoffrey Biggs</maintainer>
+  <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <license>Apache License 2.0</license>
+
+  <author email="git@killbots.net">Geoffrey Biggs</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>rosidl_default_generators</buildtool_depend>
