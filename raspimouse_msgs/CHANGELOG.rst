@@ -2,6 +2,11 @@
 Changelog for package raspimouse_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Fix documents of release 1.0.0 (`#23 <https://github.com/rt-net/raspimouse2/issues/23>`_)
+* Contributors: Shota Aoki
+
 1.0.0 (2020-06-08)
 ------------------
 
