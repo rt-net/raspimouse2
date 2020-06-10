@@ -27,3 +27,5 @@ Changelog for package raspimouse
 
 0.1.0 (2018-09-07)
 ------------------
+* Initial commit
+* Contributors: Geoffrey Biggs
