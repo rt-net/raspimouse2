@@ -2,7 +2,7 @@
 
 ROS 2 node for the Raspberry Pi Mouse.
 
-![raspimouse](https://github.com/rt-net/raspimouse2/blob/images/raspimouse.png)
+![raspimouse](https://rt-net.jp/wp-content/uploads/2020/04/Raspberry-Pi-Mouse.png)
 
 ## Build Status
 
