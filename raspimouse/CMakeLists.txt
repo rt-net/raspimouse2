@@ -53,7 +53,7 @@ ament_target_dependencies(raspimouse
   tf2_ros
   raspimouse_msgs)
 
-ament_export_interfaces(export_raspimouse_component HAS_LIBRARY_TARGET)
+ament_export_targets(export_raspimouse_component HAS_LIBRARY_TARGET)
 
 ament_export_dependencies(rosidl_default_runtime)
 ament_export_dependencies(rclcpp)
