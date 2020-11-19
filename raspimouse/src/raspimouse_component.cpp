@@ -118,12 +118,14 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   light_sensors_pub_ = this->create_publisher<raspimouse_msgs::msg::LightSensors>(
     "light_sensors", 10);
   // Timer for publishing switch information
-  switches_timer_ = create_wall_timer(100ms, std::bind(
-        &Raspimouse::publish_switches, this));
+  switches_timer_ = create_wall_timer(
+    100ms, std::bind(
+      &Raspimouse::publish_switches, this));
   switches_timer_->cancel();
   // Timer for publishing light sensor information
-  light_sensors_timer_ = create_wall_timer(100ms, std::bind(
-        &Raspimouse::publish_light_sensors, this));
+  light_sensors_timer_ = create_wall_timer(
+    100ms, std::bind(
+      &Raspimouse::publish_light_sensors, this));
   light_sensors_timer_->cancel();
   // Subscriber for LED commands
   leds_sub_ = create_subscription<raspimouse_msgs::msg::Leds>(
@@ -493,7 +495,8 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
   int pulse_count_left, pulse_count_right;
   left_counter >> pulse_count_left;
   right_counter >> pulse_count_right;
-  RCLCPP_DEBUG(get_logger(), "Old: %d, %d\tNew: %d, %d", last_pulse_count_left_,
+  RCLCPP_DEBUG(
+    get_logger(), "Old: %d, %d\tNew: %d, %d", last_pulse_count_left_,
     last_pulse_count_right_, pulse_count_left, pulse_count_right);
 
   int pulse_count_difference_left = pulse_count_left - last_pulse_count_left_;
@@ -511,7 +514,8 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
     return;
   }
 
-  RCLCPP_DEBUG(get_logger(), "Pulse differences: %d, %d", pulse_count_difference_left,
+  RCLCPP_DEBUG(
+    get_logger(), "Pulse differences: %d, %d", pulse_count_difference_left,
     pulse_count_difference_right);
 
   // Calculate number of revolutions since last time
@@ -522,7 +526,8 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
   auto left_distance = left_revolutions * one_revolution_distance_left;
   auto right_distance = right_revolutions * one_revolution_distance_right;
   auto average_distance = (right_distance + left_distance) / 2;
-  RCLCPP_DEBUG(get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
+  RCLCPP_DEBUG(
+    get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
     left_distance, right_distance, average_distance);
 
   theta += atan2(right_distance - left_distance, wheel_base);
