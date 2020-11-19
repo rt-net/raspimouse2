@@ -22,7 +22,7 @@
 #include <limits>
 #include <memory>
 #include "rclcpp/rclcpp.hpp"
-#include "rosidl_generator_cpp/message_initialization.hpp"
+#include "rosidl_runtime_cpp/message_initialization.hpp"
 #include "lifecycle_msgs/msg/transition.hpp"
 
 using namespace std::chrono_literals;
@@ -46,8 +46,8 @@ namespace raspimouse
 Raspimouse::Raspimouse(const rclcpp::NodeOptions & options)
 : rclcpp_lifecycle::LifecycleNode("raspimouse", options),
   ros_clock_(RCL_ROS_TIME),
-  odom_(rosidl_generator_cpp::MessageInitialization::ZERO),
-  odom_transform_(rosidl_generator_cpp::MessageInitialization::ZERO),
+  odom_(rosidl_runtime_cpp::MessageInitialization::ZERO),
+  odom_transform_(rosidl_runtime_cpp::MessageInitialization::ZERO),
   last_odom_time_(0),
   linear_velocity_(0),
   angular_velocity_(0),
