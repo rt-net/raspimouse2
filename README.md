@@ -23,12 +23,12 @@ ROS 2 node for the Raspberry Pi Mouse.
   - https://rt-net.jp/products/raspberrypimousev3/
   - [RT Robot Shop](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1395&products_id=3774)
 - Linux OS
-  - Ubuntu server 18.04
-  - https://wiki.ubuntu.com/ARM/RaspberryPi
+  - Ubuntu server 20.04
+  - https://ubuntu.com/download/raspberry-pi
 - Device Driver
   - [rt-net/RaspberryPiMouse](https://github.com/rt-net/RaspberryPiMouse)
 - ROS
-  - [Dashing Diademata](https://index.ros.org/doc/ros2/Installation/Dashing/Linux-Install-Debians/)
+  - [Foxy Fitzroy](https://index.ros.org/doc/ros2/Installation/Foxy/Linux-Install-Debians/)
 
 ## Installation
 
