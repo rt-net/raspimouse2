@@ -2,6 +2,11 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.0.2 (2020-12-08)
+------------------
+* Update for foxy (`#29 <https://github.com/rt-net/raspimouse2/issues/29>`_)
+* Contributors: Shota Aoki
+
 1.0.1 (2020-06-10)
 ------------------
 * Fix documents of release 1.0.0 (`#23 <https://github.com/rt-net/raspimouse2/issues/23>`_)
