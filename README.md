@@ -32,10 +32,18 @@ ROS 2 node for the Raspberry Pi Mouse.
 
 ## Installation
 
+### Binary Insallation
+
+```sh
+$ sudo apt install ros-$ROS_DISTRO-raspimouse
+```
+
+### Source Build
+
 ```sh
 $ cd ~/ros2_ws/src
 # Clone package
-$ git clone https://github.com/rt-net/raspimouse2
+$ git clone -b $ROS_DISTRO-devel https://github.com/rt-net/raspimouse2
 
 # Install dependencies
 $ rosdep install -r -y -i --from-paths .
