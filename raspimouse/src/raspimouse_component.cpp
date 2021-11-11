@@ -33,8 +33,10 @@ constexpr auto use_light_sensors_param = "use_light_sensors";
 constexpr auto odometry_scale_left_wheel_param = "odometry_scale_left_wheel";
 constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
-constexpr auto wheel_diameter = 0.048;
-constexpr auto wheel_base = 0.09;
+// constexpr auto wheel_diameter = 0.048;
+// constexpr auto wheel_base = 0.09;
+constexpr auto wheel_diameter_param = "wheel_diameter";
+constexpr auto wheel_base_param = "wheel_base";
 constexpr auto PULSES_PER_REVOLUTION = 400.0;
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
@@ -185,6 +187,8 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(use_light_sensors_param, true);
   declare_parameter(odometry_scale_left_wheel_param, 1.0);
   declare_parameter(odometry_scale_right_wheel_param, 1.0);
+  declare_parameter(wheel_base_param, 1.0);
+  declare_parameter(wheel_diameter_param, 1.0);
 
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
@@ -484,6 +488,9 @@ void Raspimouse::stop_motors()
 
 void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, double & theta)
 {
+  double wheel_diameter = get_parameter(wheel_diameter_param).get_value<double>();
+  double wheel_base = get_parameter(wheel_base_param).get_value<double>();
+
   auto one_revolution_distance_left = M_PI * wheel_diameter *
     get_parameter(odometry_scale_left_wheel_param).get_value<double>();
   auto one_revolution_distance_right = M_PI * wheel_diameter *
