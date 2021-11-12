@@ -35,9 +35,10 @@ constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
 // constexpr auto wheel_diameter = 0.048;
 // constexpr auto wheel_base = 0.09;
+// constexpr auto PULSES_PER_REVOLUTION = 400.0;
 constexpr auto wheel_diameter_param = "wheel_diameter";
 constexpr auto wheel_base_param = "wheel_base";
-constexpr auto PULSES_PER_REVOLUTION = 400.0;
+constexpr auto PULSES_PER_REVOLUTION_PARAM= "PULSES_PER_REVOLUTION";
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
 constexpr auto DEVFILE_COUNTER_R = "/dev/rtcounter_r1";
@@ -187,8 +188,9 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(use_light_sensors_param, true);
   declare_parameter(odometry_scale_left_wheel_param, 1.0);
   declare_parameter(odometry_scale_right_wheel_param, 1.0);
-  declare_parameter(wheel_base_param, 1.0);
   declare_parameter(wheel_diameter_param, 1.0);
+  declare_parameter(wheel_base_param, 1.0);
+  declare_parameter(PULSES_PER_REVOLUTION_PARAM, 1.0);
 
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
@@ -490,6 +492,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
 {
   double wheel_diameter = get_parameter(wheel_diameter_param).get_value<double>();
   double wheel_base = get_parameter(wheel_base_param).get_value<double>();
+  auto PULSES_PER_REVOLUTION = get_parameter(PULSES_PER_REVOLUTION_PARAM).get_value<double>();
 
   auto one_revolution_distance_left = M_PI * wheel_diameter *
     get_parameter(odometry_scale_left_wheel_param).get_value<double>();
@@ -514,7 +517,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
   last_odom_time_ = now();
 
   // Detect overflow/underflow
-  constexpr auto OVERFLOW_THRESHOLD = 2.0 * PULSES_PER_REVOLUTION;
+  const auto OVERFLOW_THRESHOLD = 2.0 * PULSES_PER_REVOLUTION;
   if (fabs(pulse_count_difference_left) > OVERFLOW_THRESHOLD ||
     fabs(pulse_count_difference_right) > OVERFLOW_THRESHOLD)
   {
