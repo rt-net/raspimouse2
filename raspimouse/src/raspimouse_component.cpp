@@ -33,9 +33,6 @@ constexpr auto use_light_sensors_param = "use_light_sensors";
 constexpr auto odometry_scale_left_wheel_param = "odometry_scale_left_wheel";
 constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
-// constexpr auto wheel_diameter = 0.048;
-// constexpr auto wheel_base = 0.09;
-// constexpr auto PULSES_PER_REVOLUTION = 400.0;
 constexpr auto wheel_diameter_param = "wheel_diameter";
 constexpr auto wheel_base_param = "wheel_base";
 constexpr auto PULSES_PER_REVOLUTION_PARAM= "PULSES_PER_REVOLUTION";
