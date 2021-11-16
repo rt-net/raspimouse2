@@ -33,9 +33,9 @@ constexpr auto use_light_sensors_param = "use_light_sensors";
 constexpr auto odometry_scale_left_wheel_param = "odometry_scale_left_wheel";
 constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
-constexpr auto wheel_diameter_param = "wheel_diameter";
-constexpr auto wheel_base_param = "wheel_base";
-constexpr auto PULSES_PER_REVOLUTION_PARAM= "PULSES_PER_REVOLUTION";
+constexpr auto WHEEL_DIAMETER_PARAM = "wheel_diameter";
+constexpr auto WHEEL_BASE_PARAM = "wheel_base";
+constexpr auto PULSES_PER_REVOLUTION_PARAM= "pulses_per_revolution";
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
 constexpr auto DEVFILE_COUNTER_R = "/dev/rtcounter_r1";
