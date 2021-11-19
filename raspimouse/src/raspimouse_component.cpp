@@ -186,7 +186,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(odometry_scale_left_wheel_param, 1.0);
   declare_parameter(odometry_scale_right_wheel_param, 1.0);
   declare_parameter(WHEEL_DIAMETER_PARAM, 0.048);
-  declare_parameter(WHEEL_BASE_PARAM, 0.09);
+  declare_parameter(WHEEL_BASE_PARAM, 0.0925);
   declare_parameter(PULSES_PER_REVOLUTION_PARAM, 400.0);
 
   // Test if the pulse counters are available
