@@ -207,6 +207,33 @@ Similarly other sensor information can also be viewed by echoing the relevant to
   Use hardware pulse counters as the odometry source. When set to true, hardware pulse counters
   will be used only if present.
 
+- `wheel_diameter`
+
+  Type: `double`
+
+  Default: `0.048`
+
+  Sets the diameter of the robot's wheel.
+  The unit is in meters.
+  
+- `wheel_tread`
+
+  Type: `double`
+
+  Default: `0.0925`
+
+  Sets the distance between the wheels.
+  The unit is in meters.
+
+- `pulses_per_revolution`
+
+  Type: `double`
+
+  Default: `400.0`
+
+  Sets the number of pulses needed for 1 rotation of the used motor.
+
+
 ## License
 
 This repository is licensed under the Apache 2.0, see [LICENSE](./LICENSE) for details.
