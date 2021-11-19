@@ -487,8 +487,8 @@ void Raspimouse::stop_motors()
 
 void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, double & theta)
 {
-  double WHEEL_DIAMETER = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
-  double WHEEL_TREAD = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();
+  const auto WHEEL_DIAMETER = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
+  const auto WHEEL_TREAD = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();
   const auto PULSES_PER_REVOLUTION = get_parameter(PULSES_PER_REVOLUTION_PARAM).get_value<double>();
 
   auto one_revolution_distance_left = M_PI * WHEEL_DIAMETER *
