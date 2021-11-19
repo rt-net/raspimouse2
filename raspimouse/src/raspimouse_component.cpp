@@ -34,7 +34,7 @@ constexpr auto odometry_scale_left_wheel_param = "odometry_scale_left_wheel";
 constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
 constexpr auto WHEEL_DIAMETER_PARAM = "wheel_diameter";
-constexpr auto WHEEL_BASE_PARAM = "wheel_base";
+constexpr auto WHEEL_TREAD_PARAM = "wheel_tread";
 constexpr auto PULSES_PER_REVOLUTION_PARAM= "pulses_per_revolution";
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
@@ -186,7 +186,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(odometry_scale_left_wheel_param, 1.0);
   declare_parameter(odometry_scale_right_wheel_param, 1.0);
   declare_parameter(WHEEL_DIAMETER_PARAM, 0.048);
-  declare_parameter(WHEEL_BASE_PARAM, 0.0925);
+  declare_parameter(WHEEL_TREAD_PARAM, 0.0925);
   declare_parameter(PULSES_PER_REVOLUTION_PARAM, 400.0);
 
   // Test if the pulse counters are available
@@ -488,7 +488,7 @@ void Raspimouse::stop_motors()
 void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, double & theta)
 {
   double wheel_diameter = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
-  double wheel_base = get_parameter(WHEEL_BASE_PARAM).get_value<double>();
+  double wheel_tread = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();
   const auto PULSES_PER_REVOLUTION = get_parameter(PULSES_PER_REVOLUTION_PARAM).get_value<double>();
 
   auto one_revolution_distance_left = M_PI * wheel_diameter *
@@ -537,7 +537,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
     get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
     left_distance, right_distance, average_distance);
 
-  theta += atan2(right_distance - left_distance, wheel_base);
+  theta += atan2(right_distance - left_distance, wheel_tread);
   x += average_distance * cos(theta);
   y += average_distance * sin(theta);
 
