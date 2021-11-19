@@ -33,9 +33,9 @@ constexpr auto use_light_sensors_param = "use_light_sensors";
 constexpr auto odometry_scale_left_wheel_param = "odometry_scale_left_wheel";
 constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
-constexpr auto wheel_diameter = 0.048;
-constexpr auto wheel_base = 0.09;
-constexpr auto PULSES_PER_REVOLUTION = 400.0;
+constexpr auto WHEEL_DIAMETER_PARAM = "wheel_diameter";
+constexpr auto WHEEL_TREAD_PARAM = "wheel_tread";
+constexpr auto PULSES_PER_REVOLUTION_PARAM= "pulses_per_revolution";
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
 constexpr auto DEVFILE_COUNTER_R = "/dev/rtcounter_r1";
@@ -185,6 +185,9 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(use_light_sensors_param, true);
   declare_parameter(odometry_scale_left_wheel_param, 1.0);
   declare_parameter(odometry_scale_right_wheel_param, 1.0);
+  declare_parameter(WHEEL_DIAMETER_PARAM, 0.048);
+  declare_parameter(WHEEL_TREAD_PARAM, 0.0925);
+  declare_parameter(PULSES_PER_REVOLUTION_PARAM, 400.0);
 
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
@@ -484,9 +487,13 @@ void Raspimouse::stop_motors()
 
 void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, double & theta)
 {
-  auto one_revolution_distance_left = M_PI * wheel_diameter *
+  const auto WHEEL_DIAMETER = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
+  const auto WHEEL_TREAD = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();
+  const auto PULSES_PER_REVOLUTION = get_parameter(PULSES_PER_REVOLUTION_PARAM).get_value<double>();
+
+  auto one_revolution_distance_left = M_PI * WHEEL_DIAMETER *
     get_parameter(odometry_scale_left_wheel_param).get_value<double>();
-  auto one_revolution_distance_right = M_PI * wheel_diameter *
+  auto one_revolution_distance_right = M_PI * WHEEL_DIAMETER *
     get_parameter(odometry_scale_right_wheel_param).get_value<double>();
 
   RCLCPP_DEBUG(get_logger(), "Reading counters");
@@ -507,7 +514,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
   last_odom_time_ = now();
 
   // Detect overflow/underflow
-  constexpr auto OVERFLOW_THRESHOLD = 2.0 * PULSES_PER_REVOLUTION;
+  const auto OVERFLOW_THRESHOLD = 2.0 * PULSES_PER_REVOLUTION;
   if (fabs(pulse_count_difference_left) > OVERFLOW_THRESHOLD ||
     fabs(pulse_count_difference_right) > OVERFLOW_THRESHOLD)
   {
@@ -530,7 +537,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
     get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
     left_distance, right_distance, average_distance);
 
-  theta += atan2(right_distance - left_distance, wheel_base);
+  theta += atan2(right_distance - left_distance, WHEEL_TREAD);
   x += average_distance * cos(theta);
   y += average_distance * sin(theta);
 
