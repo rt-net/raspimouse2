@@ -487,13 +487,13 @@ void Raspimouse::stop_motors()
 
 void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, double & theta)
 {
-  double wheel_diameter = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
-  double wheel_tread = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();
+  double WHEEL_DIAMETER = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
+  double WHEEL_TREAD = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();
   const auto PULSES_PER_REVOLUTION = get_parameter(PULSES_PER_REVOLUTION_PARAM).get_value<double>();
 
-  auto one_revolution_distance_left = M_PI * wheel_diameter *
+  auto one_revolution_distance_left = M_PI * WHEEL_DIAMETER *
     get_parameter(odometry_scale_left_wheel_param).get_value<double>();
-  auto one_revolution_distance_right = M_PI * wheel_diameter *
+  auto one_revolution_distance_right = M_PI * WHEEL_DIAMETER *
     get_parameter(odometry_scale_right_wheel_param).get_value<double>();
 
   RCLCPP_DEBUG(get_logger(), "Reading counters");
@@ -537,7 +537,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
     get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
     left_distance, right_distance, average_distance);
 
-  theta += atan2(right_distance - left_distance, wheel_tread);
+  theta += atan2(right_distance - left_distance, WHEEL_TREAD);
   x += average_distance * cos(theta);
   y += average_distance * sin(theta);
 
