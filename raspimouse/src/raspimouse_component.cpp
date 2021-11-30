@@ -125,6 +125,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
       &Raspimouse::publish_switches, this));
   switches_timer_->cancel();
   // Timer for publishing light sensor information
+  declare_parameter(LIGHT_SENSORS_HZ_PARAM, 100.0);
   std::chrono::milliseconds ls_hz{static_cast<long int>(get_parameter(LIGHT_SENSORS_HZ_PARAM).get_value<double>())};
   light_sensors_timer_ = create_wall_timer(
   //   100ms, // Original
@@ -192,7 +193,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(WHEEL_DIAMETER_PARAM, 0.048);
   declare_parameter(WHEEL_TREAD_PARAM, 0.0925);
   declare_parameter(PULSES_PER_REVOLUTION_PARAM, 400.0);
-  declare_parameter(LIGHT_SENSORS_HZ_PARAM, 100);
+
 
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
