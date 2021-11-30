@@ -241,6 +241,15 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
   Sets the number of pulses needed for 1 rotation of the used motor.
 
+- `light_sensors_hz`
+
+  Type: `double`
+
+  Default: `100.0`
+
+  Sets the frequency of the publishing rate of the topic /light_sensors.
+  The unit is in Hz.
+
 
 ## License
 
