@@ -33,6 +33,8 @@ constexpr auto use_light_sensors_param = "use_light_sensors";
 constexpr auto odometry_scale_left_wheel_param = "odometry_scale_left_wheel";
 constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
+constexpr auto LIGHT_SENSORS_HZ_PARAM = "light_sensors_hz";
+
 constexpr auto WHEEL_DIAMETER_PARAM = "wheel_diameter";
 constexpr auto WHEEL_TREAD_PARAM = "wheel_tread";
 constexpr auto PULSES_PER_REVOLUTION_PARAM= "pulses_per_revolution";
@@ -123,8 +125,10 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
       &Raspimouse::publish_switches, this));
   switches_timer_->cancel();
   // Timer for publishing light sensor information
+  declare_parameter(LIGHT_SENSORS_HZ_PARAM, 100.0);
+  std::chrono::milliseconds light_sensors_duration{static_cast<int64_t>(1000.0/get_parameter(LIGHT_SENSORS_HZ_PARAM).get_value<double>())};
   light_sensors_timer_ = create_wall_timer(
-    100ms, std::bind(
+    light_sensors_duration, std::bind(
       &Raspimouse::publish_light_sensors, this));
   light_sensors_timer_->cancel();
   // Subscriber for LED commands
