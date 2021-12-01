@@ -128,7 +128,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(LIGHT_SENSORS_HZ_PARAM, 10.0);
   std::chrono::milliseconds light_sensors_duration{static_cast<int64_t>(1000.0/get_parameter(LIGHT_SENSORS_HZ_PARAM).get_value<double>())};
   light_sensors_timer_ = create_wall_timer(
-    ls_duration, std::bind(
+    light_sensors_duration, std::bind(
       &Raspimouse::publish_light_sensors, this));
   light_sensors_timer_->cancel();
   // Subscriber for LED commands
