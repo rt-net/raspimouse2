@@ -193,7 +193,6 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(WHEEL_TREAD_PARAM, 0.0925);
   declare_parameter(PULSES_PER_REVOLUTION_PARAM, 400.0);
 
-
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
     RCLCPP_INFO(get_logger(), "Testing counters");
