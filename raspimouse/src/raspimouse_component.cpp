@@ -233,8 +233,7 @@ CallbackReturn Raspimouse::on_activate(const rclcpp_lifecycle::State &)
   }
 
   // Set the motor on/off
-  const auto INIT_MOTOR_POWER = get_parameter(INIT_MOTOR_POWER_PARAM).get_value<bool>();
-  set_motor_power(INIT_MOTOR_POWER);
+  set_motor_power(get_parameter(INIT_MOTOR_POWER_PARAM).get_value<bool>());
 
   RCLCPP_INFO(this->get_logger(), "Raspimouse node activated");
   return CallbackReturn::SUCCESS;
