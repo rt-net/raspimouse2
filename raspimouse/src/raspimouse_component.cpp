@@ -38,7 +38,7 @@ constexpr auto LIGHT_SENSORS_HZ_PARAM = "light_sensors_hz";
 constexpr auto WHEEL_DIAMETER_PARAM = "wheel_diameter";
 constexpr auto WHEEL_TREAD_PARAM = "wheel_tread";
 constexpr auto PULSES_PER_REVOLUTION_PARAM= "pulses_per_revolution";
-constexpr auto INIT_MOTOR_POWER_PARAM = "init_motor_power";
+constexpr auto INIT_MOTOR_POWER_PARAM = "initial_motor_power";
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
 constexpr auto DEVFILE_COUNTER_R = "/dev/rtcounter_r1";
