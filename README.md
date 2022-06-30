@@ -250,7 +250,15 @@ Similarly other sensor information can also be viewed by echoing the relevant to
   Sets the frequency of the publishing rate of the topic /light_sensors.
   The unit is in Hz.
 
+- `initial_motor_power`
 
+  Type: `bool`
+
+  Default: `False`
+
+  Sets the initial state of the motor.
+  If set as `True`, the motors will turn on when the `raspimouse` node becomes active.
+  
 ## License
 
 This repository is licensed under the Apache 2.0, see [LICENSE](./LICENSE) for details.

@@ -38,6 +38,7 @@ constexpr auto LIGHT_SENSORS_HZ_PARAM = "light_sensors_hz";
 constexpr auto WHEEL_DIAMETER_PARAM = "wheel_diameter";
 constexpr auto WHEEL_TREAD_PARAM = "wheel_tread";
 constexpr auto PULSES_PER_REVOLUTION_PARAM= "pulses_per_revolution";
+constexpr auto INIT_MOTOR_POWER_PARAM = "initial_motor_power";
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
 constexpr auto DEVFILE_COUNTER_R = "/dev/rtcounter_r1";
@@ -192,6 +193,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(WHEEL_DIAMETER_PARAM, 0.048);
   declare_parameter(WHEEL_TREAD_PARAM, 0.0925);
   declare_parameter(PULSES_PER_REVOLUTION_PARAM, 400.0);
+  declare_parameter(INIT_MOTOR_POWER_PARAM, false);
 
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
@@ -229,6 +231,9 @@ CallbackReturn Raspimouse::on_activate(const rclcpp_lifecycle::State &)
   if (get_parameter(use_light_sensors_param).get_value<bool>()) {
     light_sensors_timer_->reset();
   }
+
+  // Set the motor on/off
+  set_motor_power(get_parameter(INIT_MOTOR_POWER_PARAM).get_value<bool>());
 
   RCLCPP_INFO(this->get_logger(), "Raspimouse node activated");
   return CallbackReturn::SUCCESS;
