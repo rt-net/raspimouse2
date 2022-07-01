@@ -59,22 +59,18 @@ $ source ~/ros2_ws/install/setup.bash
 ```sh
 # Terminal 1
 $ source ~/ros2_ws/install/setup.bash
-$ ros2 run raspimouse raspimouse
-
+$ ros2 launch raspimouse raspimouse.launch.py
 
 # Terminal 2
 $ source ~/ros2_ws/install/setup.bash
-$ ros2 lifecycle set raspimouse configure
-
 # Set buzzer frequency
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 1000}'
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 0}'
-
 # or rotate motors
-$ ros2 lifecycle set raspimouse activate
 $ ros2 service call /motor_power std_srvs/SetBool '{data: true}'
-$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.05, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
-$ ros2 lifecycle set raspimouse deactivate
+$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.1, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
+# Shutdown
+$ ros2 lifecycle set raspimouse shutdown
 ```
 
 ## Node Description
@@ -108,7 +104,7 @@ a velocity command.
 
 ```shell
 $ ros2 service call /motor_power std_srvs/SetBool '{data: true}'
-$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.05, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
+$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.1, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
 ```
 
 Odometry information can be checked by echoing the `odom` topic.

@@ -75,6 +75,12 @@ install(
   DESTINATION include
 )
 
+install(DIRECTORY
+  launch
+  config
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 install(
   TARGETS raspimouse_component
   EXPORT export_raspimouse_component
