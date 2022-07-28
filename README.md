@@ -272,6 +272,31 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
   Sets the initial state of the motor.
   If set as `True`, the motors will turn on when the `raspimouse` node becomes active.
+
+- `odom_frame_id`
+
+  Type: `string`
+
+  Default: `odom`
+
+  Sets the frame_id of the topic `odom`.
+
+- `odom_child_frame_id`
+
+  Type: `string`
+
+  Default: `base_footprint`
+
+  Sets the child_frame_id of the topic `odom`.
+
+- `odom_frame_prefix`
+
+  Type: `string`
+
+  Default: `{empty}`
+
+  Adds prefix to the frames of the topic `odom`.
+  If set as *`mouse`*, the frame_id and the child_frame_id will be *`mouse/odom`* and *`mouse/baes_footprint`*.
   
 ## License
 

@@ -21,6 +21,7 @@
 #include <functional>
 #include <limits>
 #include <memory>
+#include <string>
 #include "rclcpp/rclcpp.hpp"
 #include "rosidl_runtime_cpp/message_initialization.hpp"
 #include "lifecycle_msgs/msg/transition.hpp"
@@ -41,6 +42,10 @@ constexpr auto WHEEL_DIAMETER_PARAM = "wheel_diameter";
 constexpr auto WHEEL_TREAD_PARAM = "wheel_tread";
 constexpr auto PULSES_PER_REVOLUTION_PARAM = "pulses_per_revolution";
 constexpr auto INIT_MOTOR_POWER_PARAM = "initial_motor_power";
+
+constexpr auto ODOM_FRAME_ID_PARAM = "odom_frame_id";
+constexpr auto ODOM_CHILD_FRAME_ID_PARAM = "odom_child_frame_id";
+constexpr auto ODOM_FRAME_PREFIX_PARAM = "odom_frame_prefix";
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
 constexpr auto DEVFILE_COUNTER_R = "/dev/rtcounter_r1";
@@ -79,10 +84,21 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   angular_velocity_ = 0;
   last_odom_time_ = now();
 
+  declare_parameter(ODOM_FRAME_ID_PARAM, "odom");
+  auto odom_frame_id = get_parameter(ODOM_FRAME_ID_PARAM).get_value<std::string>();
+  declare_parameter(ODOM_CHILD_FRAME_ID_PARAM, "base_footprint");
+  auto odom_child_frame_id = get_parameter(ODOM_CHILD_FRAME_ID_PARAM).get_value<std::string>();
+  declare_parameter(ODOM_FRAME_PREFIX_PARAM, "");
+  auto odom_frame_prefix = get_parameter(ODOM_FRAME_PREFIX_PARAM).get_value<std::string>();
+  if (!odom_frame_prefix.empty()) {
+    odom_frame_id = odom_frame_prefix + "/" + odom_frame_id;
+    odom_child_frame_id = odom_frame_prefix + "/" + odom_child_frame_id;
+  }
+
   // Publisher for odometry data
   odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
-  odom_.header.frame_id = "odom";
-  odom_.child_frame_id = "base_footprint";
+  odom_.header.frame_id = odom_frame_id;
+  odom_.child_frame_id = odom_child_frame_id;
   odom_.pose.pose.position.x = 0;
   odom_.pose.pose.position.y = 0;
   odom_.pose.pose.orientation.x = 0;
@@ -93,8 +109,8 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   // Publisher for odometry transform
   odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
     this->shared_from_this());
-  odom_transform_.header.frame_id = "odom";
-  odom_transform_.child_frame_id = "base_footprint";
+  odom_transform_.header.frame_id = odom_frame_id;
+  odom_transform_.child_frame_id = odom_child_frame_id;
   odom_transform_.transform.translation.x = 0;
   odom_transform_.transform.translation.y = 0;
   odom_transform_.transform.rotation.x = 0;
