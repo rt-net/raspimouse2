@@ -7,6 +7,8 @@
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <license>Apache License 2.0</license>
 
+  <author email="s.aoki@rt-net.jp">ShotaAk</author>
+  <author email="daisuke.sato@rt-net.jp">Daisuke Sato</author>
   <author email="git@killbots.net">Geoffrey Biggs</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
