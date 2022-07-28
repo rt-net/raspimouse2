@@ -243,7 +243,25 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
   Default: `100.0`
 
-  Sets the frequency of the publishing rate of the topic /light_sensors.
+  Sets the frequency of the publishing rate of the topic `light_sensors`.
+  The unit is in Hz.
+
+- `odom_hz`
+
+  Type: `double`
+
+  Default: `100.0`
+
+  Sets the frequency of the publishing rate of the topic `odom`.
+  The unit is in Hz.
+
+- `switches_hz`
+
+  Type: `double`
+
+  Default: `10.0`
+
+  Sets the frequency of the publishing rate of the topic `switches`.
   The unit is in Hz.
 
 - `initial_motor_power`
