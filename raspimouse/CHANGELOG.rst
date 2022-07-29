@@ -2,6 +2,16 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.0 (2022-07-28)
+------------------
+* Add authors to package.xml
+* トピックpublish周波数とフレームIDを変更するパラメータを追加 (`#42 <https://github.com/rt-net/raspimouse2/issues/42>`_)
+* ノードの実行を簡単にするためlaunchファイルとconfigファイルを追加 `#41 <https://github.com/rt-net/raspimouse2/issues/41>`_
+* Add initial_motor_power param (`#39 <https://github.com/rt-net/raspimouse2/issues/39>`_)
+* パラメータの追加（`#35 <https://github.com/rt-net/raspimouse2/issues/35>`_） (`#38 <https://github.com/rt-net/raspimouse2/issues/38>`_)
+* パラメータの追加 （`#34 <https://github.com/rt-net/raspimouse2/issues/34>`_） (`#36 <https://github.com/rt-net/raspimouse2/issues/36>`_)
+* Contributors: Shota Aoki, Shuhei Kozasa
+
 1.0.2 (2020-12-08)
 ------------------
 * Update for foxy (`#29 <https://github.com/rt-net/raspimouse2/issues/29>`_)

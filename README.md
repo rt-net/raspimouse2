@@ -11,11 +11,11 @@ ROS 2 node for the Raspberry Pi Mouse.
 [![industrial_ci](https://github.com/rt-net/raspimouse2/workflows/industrial_ci/badge.svg?branch=master)](https://github.com/rt-net/raspimouse2/actions?query=workflow%3Aindustrial_ci+branch%3Amaster)
 
 ### Source Build Status on ROS2 Buildfarm
-#### Bionic + Dashing ([`dashing-devel`](https://github.com/rt-net/raspimouse2/tree/dashing-devel))
+#### Foxy + Focal ([`foxy-devel`](https://github.com/rt-net/raspimouse2/tree/foxy-devel))
 
 | raspimouse | raspimouse_msgs |
 |:---:|:---:|
-| [![](http://build.ros2.org/buildStatus/icon?job=Dsrc_uB__raspimouse__ubuntu_bionic__source)](http://build.ros2.org/view/Dsrc_uB/job/Dsrc_uB__raspimouse__ubuntu_bionic__source/) | [![](http://build.ros2.org/buildStatus/icon?job=Dsrc_uB__raspimouse_msgs__ubuntu_bionic__source/)](http://build.ros2.org/view/Dsrc_uB/job/Dsrc_uB__raspimouse_msgs__ubuntu_bionic__source/) |
+| [![Build Status](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse__ubuntu_focal__source/badge/icon)](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse__ubuntu_focal__source/) | [![Build Status](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse_msgs__ubuntu_focal__source/badge/icon)](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse_msgs__ubuntu_focal__source/) |
 
 ## Requirements
 
@@ -32,10 +32,18 @@ ROS 2 node for the Raspberry Pi Mouse.
 
 ## Installation
 
+### Binary Insallation
+
+```sh
+$ sudo apt install ros-$ROS_DISTRO-raspimouse
+```
+
+### Source Build
+
 ```sh
 $ cd ~/ros2_ws/src
 # Clone package
-$ git clone https://github.com/rt-net/raspimouse2
+$ git clone -b $ROS_DISTRO-devel https://github.com/rt-net/raspimouse2
 
 # Install dependencies
 $ rosdep install -r -y -i --from-paths .
@@ -51,22 +59,18 @@ $ source ~/ros2_ws/install/setup.bash
 ```sh
 # Terminal 1
 $ source ~/ros2_ws/install/setup.bash
-$ ros2 run raspimouse raspimouse
-
+$ ros2 launch raspimouse raspimouse.launch.py
 
 # Terminal 2
 $ source ~/ros2_ws/install/setup.bash
-$ ros2 lifecycle set raspimouse configure
-
 # Set buzzer frequency
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 1000}'
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 0}'
-
 # or rotate motors
-$ ros2 lifecycle set raspimouse activate
 $ ros2 service call /motor_power std_srvs/SetBool '{data: true}'
-$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.05, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
-$ ros2 lifecycle set raspimouse deactivate
+$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.1, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
+# Shutdown
+$ ros2 lifecycle set raspimouse shutdown
 ```
 
 ## Node Description
@@ -100,7 +104,7 @@ a velocity command.
 
 ```shell
 $ ros2 service call /motor_power std_srvs/SetBool '{data: true}'
-$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.05, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
+$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.1, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
 ```
 
 Odometry information can be checked by echoing the `odom` topic.
@@ -207,6 +211,93 @@ Similarly other sensor information can also be viewed by echoing the relevant to
   Use hardware pulse counters as the odometry source. When set to true, hardware pulse counters
   will be used only if present.
 
+- `wheel_diameter`
+
+  Type: `double`
+
+  Default: `0.048`
+
+  Sets the diameter of the robot's wheel.
+  The unit is in meters.
+  
+- `wheel_tread`
+
+  Type: `double`
+
+  Default: `0.0925`
+
+  Sets the distance between the wheels.
+  The unit is in meters.
+
+- `pulses_per_revolution`
+
+  Type: `double`
+
+  Default: `400.0`
+
+  Sets the number of pulses needed for 1 rotation of the used motor.
+
+- `light_sensors_hz`
+
+  Type: `double`
+
+  Default: `100.0`
+
+  Sets the frequency of the publishing rate of the topic `light_sensors`.
+  The unit is in Hz.
+
+- `odom_hz`
+
+  Type: `double`
+
+  Default: `100.0`
+
+  Sets the frequency of the publishing rate of the topic `odom`.
+  The unit is in Hz.
+
+- `switches_hz`
+
+  Type: `double`
+
+  Default: `10.0`
+
+  Sets the frequency of the publishing rate of the topic `switches`.
+  The unit is in Hz.
+
+- `initial_motor_power`
+
+  Type: `bool`
+
+  Default: `False`
+
+  Sets the initial state of the motor.
+  If set as `True`, the motors will turn on when the `raspimouse` node becomes active.
+
+- `odom_frame_id`
+
+  Type: `string`
+
+  Default: `odom`
+
+  Sets the frame_id of the topic `odom`.
+
+- `odom_child_frame_id`
+
+  Type: `string`
+
+  Default: `base_footprint`
+
+  Sets the child_frame_id of the topic `odom`.
+
+- `odom_frame_prefix`
+
+  Type: `string`
+
+  Default: `{empty}`
+
+  Adds prefix to the frames of the topic `odom`.
+  If set as *`mouse`*, the frame_id and the child_frame_id will be *`mouse/odom`* and *`mouse/baes_footprint`*.
+  
 ## License
 
 This repository is licensed under the Apache 2.0, see [LICENSE](./LICENSE) for details.

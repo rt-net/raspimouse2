@@ -21,6 +21,7 @@
 #include <functional>
 #include <limits>
 #include <memory>
+#include <string>
 #include "rclcpp/rclcpp.hpp"
 #include "rosidl_runtime_cpp/message_initialization.hpp"
 #include "lifecycle_msgs/msg/transition.hpp"
@@ -33,9 +34,18 @@ constexpr auto use_light_sensors_param = "use_light_sensors";
 constexpr auto odometry_scale_left_wheel_param = "odometry_scale_left_wheel";
 constexpr auto odometry_scale_right_wheel_param = "odometry_scale_right_wheel";
 
-constexpr auto wheel_diameter = 0.048;
-constexpr auto wheel_base = 0.09;
-constexpr auto PULSES_PER_REVOLUTION = 400.0;
+constexpr auto LIGHT_SENSORS_HZ_PARAM = "light_sensors_hz";
+constexpr auto ODOM_HZ_PARAM = "odom_hz";
+constexpr auto SWITCHES_HZ_PARAM = "switches_hz";
+
+constexpr auto WHEEL_DIAMETER_PARAM = "wheel_diameter";
+constexpr auto WHEEL_TREAD_PARAM = "wheel_tread";
+constexpr auto PULSES_PER_REVOLUTION_PARAM = "pulses_per_revolution";
+constexpr auto INIT_MOTOR_POWER_PARAM = "initial_motor_power";
+
+constexpr auto ODOM_FRAME_ID_PARAM = "odom_frame_id";
+constexpr auto ODOM_CHILD_FRAME_ID_PARAM = "odom_child_frame_id";
+constexpr auto ODOM_FRAME_PREFIX_PARAM = "odom_frame_prefix";
 
 constexpr auto DEVFILE_COUNTER_L = "/dev/rtcounter_l1";
 constexpr auto DEVFILE_COUNTER_R = "/dev/rtcounter_r1";
@@ -74,10 +84,21 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   angular_velocity_ = 0;
   last_odom_time_ = now();
 
+  declare_parameter(ODOM_FRAME_ID_PARAM, "odom");
+  auto odom_frame_id = get_parameter(ODOM_FRAME_ID_PARAM).get_value<std::string>();
+  declare_parameter(ODOM_CHILD_FRAME_ID_PARAM, "base_footprint");
+  auto odom_child_frame_id = get_parameter(ODOM_CHILD_FRAME_ID_PARAM).get_value<std::string>();
+  declare_parameter(ODOM_FRAME_PREFIX_PARAM, "");
+  auto odom_frame_prefix = get_parameter(ODOM_FRAME_PREFIX_PARAM).get_value<std::string>();
+  if (!odom_frame_prefix.empty()) {
+    odom_frame_id = odom_frame_prefix + "/" + odom_frame_id;
+    odom_child_frame_id = odom_frame_prefix + "/" + odom_child_frame_id;
+  }
+
   // Publisher for odometry data
   odom_pub_ = this->create_publisher<nav_msgs::msg::Odometry>("odom", 10);
-  odom_.header.frame_id = "odom";
-  odom_.child_frame_id = "base_footprint";
+  odom_.header.frame_id = odom_frame_id;
+  odom_.child_frame_id = odom_child_frame_id;
   odom_.pose.pose.position.x = 0;
   odom_.pose.pose.position.y = 0;
   odom_.pose.pose.orientation.x = 0;
@@ -88,8 +109,8 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   // Publisher for odometry transform
   odom_transform_broadcaster_ = std::make_shared<tf2_ros::TransformBroadcaster>(
     this->shared_from_this());
-  odom_transform_.header.frame_id = "odom";
-  odom_transform_.child_frame_id = "base_footprint";
+  odom_transform_.header.frame_id = odom_frame_id;
+  odom_transform_.child_frame_id = odom_child_frame_id;
   odom_transform_.transform.translation.x = 0;
   odom_transform_.transform.translation.y = 0;
   odom_transform_.transform.rotation.x = 0;
@@ -97,7 +118,10 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   odom_transform_.transform.rotation.z = 0;
   odom_transform_.transform.rotation.w = 0;
   // Timer for providing the odometry data
-  odom_timer_ = create_wall_timer(100ms, std::bind(&Raspimouse::publish_odometry, this));
+  declare_parameter(ODOM_HZ_PARAM, 100.0);
+  std::chrono::milliseconds odom_duration{static_cast<int64_t>(
+      1000.0 / get_parameter(ODOM_HZ_PARAM).get_value<double>())};
+  odom_timer_ = create_wall_timer(odom_duration, std::bind(&Raspimouse::publish_odometry, this));
   // Don't actually start publishing odometry data until activated
   odom_timer_->cancel();
 
@@ -117,16 +141,24 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   // Publisher for light sensors
   light_sensors_pub_ = this->create_publisher<raspimouse_msgs::msg::LightSensors>(
     "light_sensors", 10);
+
   // Timer for publishing switch information
+  declare_parameter(SWITCHES_HZ_PARAM, 10.0);
+  std::chrono::milliseconds switches_duration{static_cast<int64_t>(
+      1000.0 / get_parameter(SWITCHES_HZ_PARAM).get_value<double>())};
   switches_timer_ = create_wall_timer(
-    100ms, std::bind(
+    switches_duration, std::bind(
       &Raspimouse::publish_switches, this));
   switches_timer_->cancel();
   // Timer for publishing light sensor information
+  declare_parameter(LIGHT_SENSORS_HZ_PARAM, 100.0);
+  std::chrono::milliseconds light_sensors_duration{static_cast<int64_t>(
+      1000.0 / get_parameter(LIGHT_SENSORS_HZ_PARAM).get_value<double>())};
   light_sensors_timer_ = create_wall_timer(
-    100ms, std::bind(
+    light_sensors_duration, std::bind(
       &Raspimouse::publish_light_sensors, this));
   light_sensors_timer_->cancel();
+
   // Subscriber for LED commands
   leds_sub_ = create_subscription<raspimouse_msgs::msg::Leds>(
     "leds", 10, std::bind(&Raspimouse::leds_command, this, _1));
@@ -185,6 +217,10 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   declare_parameter(use_light_sensors_param, true);
   declare_parameter(odometry_scale_left_wheel_param, 1.0);
   declare_parameter(odometry_scale_right_wheel_param, 1.0);
+  declare_parameter(WHEEL_DIAMETER_PARAM, 0.048);
+  declare_parameter(WHEEL_TREAD_PARAM, 0.0925);
+  declare_parameter(PULSES_PER_REVOLUTION_PARAM, 400.0);
+  declare_parameter(INIT_MOTOR_POWER_PARAM, false);
 
   // Test if the pulse counters are available
   if (get_parameter(use_pulse_counters_param).get_value<bool>()) {
@@ -222,6 +258,9 @@ CallbackReturn Raspimouse::on_activate(const rclcpp_lifecycle::State &)
   if (get_parameter(use_light_sensors_param).get_value<bool>()) {
     light_sensors_timer_->reset();
   }
+
+  // Set the motor on/off
+  set_motor_power(get_parameter(INIT_MOTOR_POWER_PARAM).get_value<bool>());
 
   RCLCPP_INFO(this->get_logger(), "Raspimouse node activated");
   return CallbackReturn::SUCCESS;
@@ -484,9 +523,13 @@ void Raspimouse::stop_motors()
 
 void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, double & theta)
 {
-  auto one_revolution_distance_left = M_PI * wheel_diameter *
+  const auto WHEEL_DIAMETER = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
+  const auto WHEEL_TREAD = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();
+  const auto PULSES_PER_REVOLUTION = get_parameter(PULSES_PER_REVOLUTION_PARAM).get_value<double>();
+
+  auto one_revolution_distance_left = M_PI * WHEEL_DIAMETER *
     get_parameter(odometry_scale_left_wheel_param).get_value<double>();
-  auto one_revolution_distance_right = M_PI * wheel_diameter *
+  auto one_revolution_distance_right = M_PI * WHEEL_DIAMETER *
     get_parameter(odometry_scale_right_wheel_param).get_value<double>();
 
   RCLCPP_DEBUG(get_logger(), "Reading counters");
@@ -507,7 +550,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
   last_odom_time_ = now();
 
   // Detect overflow/underflow
-  constexpr auto OVERFLOW_THRESHOLD = 2.0 * PULSES_PER_REVOLUTION;
+  const auto OVERFLOW_THRESHOLD = 2.0 * PULSES_PER_REVOLUTION;
   if (fabs(pulse_count_difference_left) > OVERFLOW_THRESHOLD ||
     fabs(pulse_count_difference_right) > OVERFLOW_THRESHOLD)
   {
@@ -530,7 +573,7 @@ void Raspimouse::calculate_odometry_from_pulse_counts(double & x, double & y, do
     get_logger(), "Left dist: %f\tRight dist: %f\tAverage: %f",
     left_distance, right_distance, average_distance);
 
-  theta += atan2(right_distance - left_distance, wheel_base);
+  theta += atan2(right_distance - left_distance, WHEEL_TREAD);
   x += average_distance * cos(theta);
   y += average_distance * sin(theta);
 
