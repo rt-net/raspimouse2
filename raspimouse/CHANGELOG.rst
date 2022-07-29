@@ -10,7 +10,7 @@ Changelog for package raspimouse
 * Add initial_motor_power param (`#39 <https://github.com/rt-net/raspimouse2/issues/39>`_)
 * パラメータの追加（`#35 <https://github.com/rt-net/raspimouse2/issues/35>`_） (`#38 <https://github.com/rt-net/raspimouse2/issues/38>`_)
 * パラメータの追加 （`#34 <https://github.com/rt-net/raspimouse2/issues/34>`_） (`#36 <https://github.com/rt-net/raspimouse2/issues/36>`_)
-* Contributors: Shota Aoki, ShotaAk, Shuhei Kozasa
+* Contributors: Shota Aoki, Shuhei Kozasa
 
 1.0.2 (2020-12-08)
 ------------------
