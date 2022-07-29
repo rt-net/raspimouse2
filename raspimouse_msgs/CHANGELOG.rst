@@ -2,6 +2,10 @@
 Changelog for package raspimouse_msgs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.1.0 (2022-07-28)
+------------------
+* Add authors to package.xml
+
 1.0.2 (2020-12-08)
 ------------------
 
