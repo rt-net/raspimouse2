@@ -54,6 +54,13 @@ $ colcon build --symlink-install
 $ source ~/ros2_ws/install/setup.bash
 ```
 
+If `colcon build --symlink-install` stops due to the lack of DRAM, please try
+```sh
+$ MAKEFLAGS=-j1 colcon build --symlink-install
+```
+instead.
+
+
 ## QuickStart
 
 ```sh
