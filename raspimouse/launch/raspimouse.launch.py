@@ -28,6 +28,7 @@ from lifecycle_msgs.msg import Transition
 
 def generate_launch_description():
     mouse_node = LifecycleNode(
+        namespace='',
         name='raspimouse',
         package='raspimouse', executable='raspimouse', output='screen',
         parameters=[os.path.join(get_package_share_directory(
