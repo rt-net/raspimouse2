@@ -14,7 +14,6 @@
 
 #include "raspimouse/raspimouse_component.hpp"
 
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <chrono>
 #include <fstream>
@@ -22,9 +21,12 @@
 #include <limits>
 #include <memory>
 #include <string>
+
 #include "rclcpp/rclcpp.hpp"
 #include "rosidl_runtime_cpp/message_initialization.hpp"
 #include "lifecycle_msgs/msg/transition.hpp"
+
+#define _USE_MATH_DEFINES
 
 using namespace std::chrono_literals;
 using CallbackReturn = rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn;
