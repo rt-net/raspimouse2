@@ -11,11 +11,11 @@ ROS 2 node for the Raspberry Pi Mouse.
 [![industrial_ci](https://github.com/rt-net/raspimouse2/workflows/industrial_ci/badge.svg?branch=master)](https://github.com/rt-net/raspimouse2/actions?query=workflow%3Aindustrial_ci+branch%3Amaster)
 
 ### Source Build Status on ROS2 Buildfarm
-#### Humble + Jammy ([`humble-devel`](https://github.com/rt-net/raspimouse2/tree/humble-devel))
 
-| raspimouse | raspimouse_msgs |
-|:---:|:---:|
-| **TODO** | **TODO** |
+| ROS 2 + Ubuntu | raspimouse | raspimouse_msgs |
+|:---:|:---:|:---:|
+| Foxy + Focal ([`foxy-devel`](https://github.com/rt-net/raspimouse2/tree/foxy-devel)) | [![Build Status](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse__ubuntu_focal__source/badge/icon)](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse__ubuntu_focal__source/) | [![Build Status](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse_msgs__ubuntu_focal__source/badge/icon)](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse_msgs__ubuntu_focal__source/) |
+| Humble + Jammy ([`humble-devel`](https://github.com/rt-net/raspimouse2/tree/humble-devel)) | **TODO** | **TODO** |
 
 ## Requirements
 
@@ -28,6 +28,7 @@ ROS 2 node for the Raspberry Pi Mouse.
 - Device Driver
   - [rt-net/RaspberryPiMouse](https://github.com/rt-net/RaspberryPiMouse)
 - ROS
+  - [Foxy Fitzroy](https://index.ros.org/doc/ros2/Installation/Foxy/Linux-Install-Debians/)
   - [Humble Hawksbill](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 
 ## Installation
