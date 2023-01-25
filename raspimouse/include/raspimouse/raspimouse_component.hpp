@@ -53,6 +53,11 @@ extern "C" {
 }  // extern "C"
 #endif
 
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2/LinearMath/Quaternion.h>
+
+#include <memory>
+
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include <rclcpp_lifecycle/lifecycle_publisher.hpp>
@@ -60,14 +65,11 @@ extern "C" {
 #include <std_msgs/msg/int16.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 #include <nav_msgs/msg/odometry.hpp>
-#include <tf2_ros/transform_broadcaster.h>
-#include <tf2/LinearMath/Quaternion.h>
 
 #include <raspimouse_msgs/msg/leds.hpp>
 #include <raspimouse_msgs/msg/switches.hpp>
 #include <raspimouse_msgs/msg/light_sensors.hpp>
 
-#include <memory>
 
 namespace raspimouse
 {
