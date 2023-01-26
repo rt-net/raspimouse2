@@ -2,6 +2,11 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Humble対応 (`#48 <https://github.com/rt-net/raspimouse2/issues/48>`_)
+* Contributors: Shuhei Kozasa, Daisuke Sato
+
 1.1.0 (2022-07-28)
 ------------------
 * Add authors to package.xml
