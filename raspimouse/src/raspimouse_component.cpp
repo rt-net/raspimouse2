@@ -436,11 +436,14 @@ void Raspimouse::velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg
   linear_velocity_ = msg->linear.x;
   angular_velocity_ = msg->angular.z;
 
-  auto forward_hz = 80000 * linear_velocity_ / (9 * M_PI);
-  auto rotation_hz = 400 * angular_velocity_ / M_PI;
+  const auto WHEEL_DIAMETER = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
+  const auto WHEEL_TREAD = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();
 
-  *left_motor_control_ << static_cast<int>(round(forward_hz - rotation_hz)) << std::endl;
-  *right_motor_control_ << static_cast<int>(round(forward_hz + rotation_hz)) << std::endl;
+  const double vel_left  = (linear_velocity_ - angular_velocity_ * WHEEL_TREAD / 2.0)/(WHEEL_DIAMETER/2);
+  const double vel_right = (linear_velocity_ + angular_velocity_ * WHEEL_TREAD / 2.0)/(WHEEL_DIAMETER/2);
+
+  *left_motor_control_ << static_cast<int>(round(vel_left / (2.0 * M_PI) * 400.0)) << std::endl;
+  *right_motor_control_ << static_cast<int>(round(vel_right / (2.0 * M_PI) * 400.0)) << std::endl;
   // Reset the watchdog timeout
   watchdog_timer_->reset();
 }
