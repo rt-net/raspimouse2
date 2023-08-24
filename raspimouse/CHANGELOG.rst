@@ -2,8 +2,8 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.1.2 (2023-08-24)
+------------------
 * Calculate speed from robot parameters (`#50 <https://github.com/rt-net/raspimouse2/issues/50>`_)
 * Contributors: Tatsuhiro Ikebe
 
