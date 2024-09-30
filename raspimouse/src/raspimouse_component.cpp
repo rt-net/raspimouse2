@@ -25,6 +25,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rosidl_runtime_cpp/message_initialization.hpp"
 #include "lifecycle_msgs/msg/transition.hpp"
+#include "geometry_msgs/msg/twist_stamped.hpp"
 
 #define _USE_MATH_DEFINES
 
@@ -128,7 +129,7 @@ CallbackReturn Raspimouse::on_configure(const rclcpp_lifecycle::State &)
   odom_timer_->cancel();
 
   // Subscriber for velocity commands
-  velocity_sub_ = create_subscription<geometry_msgs::msg::Twist>(
+  velocity_sub_ = create_subscription<geometry_msgs::msg::TwistStamped>(
     "cmd_vel", 10, std::bind(&Raspimouse::velocity_command, this, _1));
 
   // Motor power control service
@@ -431,10 +432,10 @@ void Raspimouse::publish_light_sensors()
   light_sensors_pub_->publish(sensor_values);
 }
 
-void Raspimouse::velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg)
+void Raspimouse::velocity_command(const geometry_msgs::msg::TwistStamped::SharedPtr msg)
 {
-  linear_velocity_ = msg->linear.x;
-  angular_velocity_ = msg->angular.z;
+  linear_velocity_ = msg->twist.linear.x;
+  angular_velocity_ = msg->twist.angular.z;
 
   const auto WHEEL_DIAMETER = get_parameter(WHEEL_DIAMETER_PARAM).get_value<double>();
   const auto WHEEL_TREAD = get_parameter(WHEEL_TREAD_PARAM).get_value<double>();

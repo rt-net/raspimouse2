@@ -65,6 +65,7 @@ extern "C" {
 #include <std_msgs/msg/int16.hpp>
 #include <std_srvs/srv/set_bool.hpp>
 #include <nav_msgs/msg/odometry.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
 
 #include <raspimouse_msgs/msg/leds.hpp>
 #include <raspimouse_msgs/msg/switches.hpp>
@@ -97,7 +98,7 @@ private:
   int last_pulse_count_left_;
   int last_pulse_count_right_;
 
-  rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr velocity_sub_;
+  rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr velocity_sub_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr power_service_;
   rclcpp::TimerBase::SharedPtr watchdog_timer_;
 
@@ -136,7 +137,7 @@ private:
   void publish_switches();
   void publish_light_sensors();
 
-  void velocity_command(const geometry_msgs::msg::Twist::SharedPtr msg);
+  void velocity_command(const geometry_msgs::msg::TwistStamped::SharedPtr msg);
   void leds_command(const raspimouse_msgs::msg::Leds::SharedPtr msg);
   void buzzer_command(const std_msgs::msg::Int16::SharedPtr msg);
 
