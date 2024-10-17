@@ -48,6 +48,8 @@ $ source ~/ros2_ws/install/setup.bash
 
 ## QuickStart
 
+Build and install the [device driver](https://github.com/rt-net/RaspberryPiMouse) in advance.
+
 ```sh
 # Terminal 1
 $ source ~/ros2_ws/install/setup.bash
@@ -55,12 +57,15 @@ $ ros2 launch raspimouse raspimouse.launch.py
 
 # Terminal 2
 $ source ~/ros2_ws/install/setup.bash
+$ ros2 lifecycle set raspimouse configure
+$ ros2 lifecycle set raspimouse activate
+
 # Set buzzer frequency
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 1000}'
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 0}'
 # or rotate motors
 $ ros2 service call /motor_power std_srvs/SetBool '{data: true}'
-$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.1, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
+$ ros2 topic pub -1 /cmd_vel geometry_msgs/msg/TwistStamped '{twist: {linear: {x: 0.05, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}}'
 # Shutdown
 $ ros2 lifecycle set raspimouse shutdown
 ```
@@ -96,7 +101,7 @@ a velocity command.
 
 ```shell
 $ ros2 service call /motor_power std_srvs/SetBool '{data: true}'
-$ ros2 topic pub -1 /cmd_vel geometry_msgs/Twist '{linear: {x: 0.1, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}'
+$ ros2 topic pub -1 /cmd_vel geometry_msgs/msg/TwistStamped '{twist: {linear: {x: 0.1, y: 0, z: 0}, angular: {x: 0, y: 0, z: 0.05}}}'
 ```
 
 Odometry information can be checked by echoing the `odom` topic.
@@ -120,7 +125,7 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
 - `cmd_vel`
 
-  Type: `geometry_msgs/Twist`
+  Type: `geometry_msgs/msg/TwistStamped`
 
   Controls the motors. Specify the forward and turning speeds of the robot.
 
