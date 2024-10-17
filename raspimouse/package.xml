@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>raspimouse</name>
-  <version>1.1.2</version>
+  <version>2.0.0</version>
   <description>RaspiMouse ROS 2 node</description>
   <maintainer email="shop@rt-net.jp">RT Corporation</maintainer>
   <license>Apache License 2.0</license>
@@ -11,6 +11,7 @@
   <author email="daisuke.sato@rt-net.jp">Daisuke Sato</author>
   <author email="kozasa@rt-net.jp">Shuhei Kozasa</author>
   <author email="git@killbots.net">Geoffrey Biggs</author>
+  <author email="kurasawa@rt-net.jp">Kazushi Kurasawa</author>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

@@ -2,6 +2,13 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2024-10-17)
+------------------
+* Update for Jazzy
+* Update documents for migration to Jazzy
+* Change the message type of `/cmd/vel` from `Twist` to `TwistStamped`
+* Contributors: Kazushi Kurasawa
+
 1.1.2 (2023-08-24)
 ------------------
 * Calculate speed from robot parameters (`#50 <https://github.com/rt-net/raspimouse2/issues/50>`_)
