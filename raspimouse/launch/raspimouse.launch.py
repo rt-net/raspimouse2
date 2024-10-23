@@ -21,8 +21,8 @@ from launch.actions import RegisterEventHandler
 from launch.events import matches_action
 from launch.events import Shutdown
 from launch_ros.actions import LifecycleNode
-from launch_ros.events import lifecycle
 from launch_ros.event_handlers import OnStateTransition
+from launch_ros.events import lifecycle
 from lifecycle_msgs.msg import Transition
 
 
@@ -33,7 +33,7 @@ def generate_launch_description():
         package='raspimouse', executable='raspimouse', output='screen',
         parameters=[os.path.join(get_package_share_directory(
             'raspimouse'), 'config', 'params.yaml')]
-            )
+    )
 
     emit_configuring_event = EmitEvent(
         event=lifecycle.ChangeState(

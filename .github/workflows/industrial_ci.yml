@@ -16,10 +16,12 @@ jobs:
   industrial_ci:
     strategy:
       matrix:
-        env:
-          - { ROS_DISTRO: humble, ROS_REPO: ros }
+        ROS_DISTRO: [jazzy]
+        ROS_REPO: [ros]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: "ros-industrial/industrial_ci@master"
-        env: ${{ matrix.env }}
+        env:
+          ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
+          ROS_REPO: ${{ matrix.ROS_REPO }}
