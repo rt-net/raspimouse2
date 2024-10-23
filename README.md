@@ -56,7 +56,7 @@ $ source ~/ros2_ws/install/setup.bash
 $ ros2 launch raspimouse raspimouse.launch.py
 
 # Terminal 2
-$ source ~/ros2_ws/install/setup.
+$ source ~/ros2_ws/install/setup.bash
 # Set buzzer frequency
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 1000}'
 $ ros2 topic pub -1 /buzzer std_msgs/msg/Int16 '{data: 0}'
