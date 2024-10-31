@@ -6,6 +6,10 @@ ROS 2 node for the Raspberry Pi Mouse.
 
 ![raspimouse](https://rt-net.github.io/images/raspberry-pi-mouse/Raspberry-Pi-Mouse.png)
 
+This branch is dedicated to ROS 2 Jazzy. For other distributions, please refer to the corresponding branches listed below.
+
+- ROS 2 Humble ([humble](https://github.com/rt-net/raspimouse2/tree/humble?tab=readme-ov-file))
+
 ## Requirements
 
 - Raspberry Pi Mouse
@@ -15,10 +19,9 @@ ROS 2 node for the Raspberry Pi Mouse.
   - Ubuntu server
     - 22.04
     - 24.04
-  - [Raspberry Pi OS](https://ubuntu.com/download/raspberry-pi)
 - Device Driver
   - [rt-net/RaspberryPiMouse](https://github.com/rt-net/RaspberryPiMouse)
-- ROS
+- ROS 2
   - [Humble Hawksbill](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
   - [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
 
