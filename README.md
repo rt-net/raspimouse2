@@ -6,7 +6,7 @@ ROS 2 node for the Raspberry Pi Mouse.
 
 ![raspimouse](https://rt-net.github.io/images/raspberry-pi-mouse/Raspberry-Pi-Mouse.png)
 
-This branch is dedicated to ROS 2 Jazzy. For other distributions, please refer to the corresponding branches listed below.
+**This branch is dedicated to ROS 2 Jazzy. For other distributions, please refer to the corresponding branches listed below.**
 
 - ROS 2 Humble ([humble](https://github.com/rt-net/raspimouse2/tree/humble?tab=readme-ov-file))
 
