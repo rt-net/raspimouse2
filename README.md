@@ -1,34 +1,25 @@
 # Raspimouse Node
 
+[![industrial_ci](https://github.com/rt-net/raspimouse2/actions/workflows/industrial_ci.yml/badge.svg?branch=humble-devel)](https://github.com/rt-net/raspimouse2/actions/workflows/industrial_ci.yml)
+
 ROS 2 node for the Raspberry Pi Mouse.
 
-![raspimouse](https://rt-net.jp/wp-content/uploads/2020/04/Raspberry-Pi-Mouse.png)
+**This branch is dedicated to `ROS 2 Humble`. For other distributions, please refer to the corresponding branches listed below.**
 
-## Build Status
+- ROS 2 Jazzy [(jazzy)](https://github.com/rt-net/raspimouse2/tree/jazzy)
 
-### master branch
-
-[![industrial_ci](https://github.com/rt-net/raspimouse2/workflows/industrial_ci/badge.svg?branch=master)](https://github.com/rt-net/raspimouse2/actions?query=workflow%3Aindustrial_ci+branch%3Amaster)
-
-### Source Build Status on ROS2 Buildfarm
-
-| ROS 2 + Ubuntu | raspimouse | raspimouse_msgs |
-|:---:|:---:|:---:|
-| Foxy + Focal ([`foxy-devel`](https://github.com/rt-net/raspimouse2/tree/foxy-devel)) | [![Build Status](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse__ubuntu_focal__source/badge/icon)](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse__ubuntu_focal__source/) | [![Build Status](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse_msgs__ubuntu_focal__source/badge/icon)](https://build.ros2.org/view/Fsrc_uF/job/Fsrc_uF__raspimouse_msgs__ubuntu_focal__source/) |
-| Humble + Jammy ([`humble-devel`](https://github.com/rt-net/raspimouse2/tree/humble-devel)) | **TODO** | **TODO** |
+![raspimouse](https://rt-net.github.io/images/raspberry-pi-mouse/Raspberry-Pi-Mouse.png)
 
 ## Requirements
 
 - Raspberry Pi Mouse
-  - https://rt-net.jp/products/raspberrypimousev3/
-  - [RT Robot Shop](https://www.rt-shop.jp/index.php?main_page=product_info&cPath=1299_1395&products_id=3774)
+  - [Summary](https://rt-net.jp/products/raspberrypimousev3/)
+  - [RT Robot Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=4141)
 - Linux OS
-  - Ubuntu server 20.04
-  - https://ubuntu.com/download/raspberry-pi
+  - Ubuntu server 22.04
 - Device Driver
   - [rt-net/RaspberryPiMouse](https://github.com/rt-net/RaspberryPiMouse)
-- ROS
-  - [Foxy Fitzroy](https://index.ros.org/doc/ros2/Installation/Foxy/Linux-Install-Debians/)
+- ROS 2
   - [Humble Hawksbill](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
 
 ## Installation
@@ -44,7 +35,7 @@ $ sudo apt install ros-$ROS_DISTRO-raspimouse
 ```sh
 $ cd ~/ros2_ws/src
 # Clone package
-$ git clone -b $ROS_DISTRO-devel https://github.com/rt-net/raspimouse2
+$ git clone -b $ROS_DISTRO https://github.com/rt-net/raspimouse2
 
 # Install dependencies
 $ rosdep install -r -y -i --from-paths .
@@ -56,6 +47,8 @@ $ source ~/ros2_ws/install/setup.bash
 ```
 
 ## QuickStart
+
+Build and install the [device driver](https://github.com/rt-net/RaspberryPiMouse) in advance.
 
 ```sh
 # Terminal 1
@@ -220,7 +213,7 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
   Sets the diameter of the robot's wheel.
   The unit is in meters.
-  
+
 - `wheel_tread`
 
   Type: `double`
@@ -298,7 +291,7 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
   Adds prefix to the frames of the topic `odom`.
   If set as *`mouse`*, the frame_id and the child_frame_id will be *`mouse/odom`* and *`mouse/baes_footprint`*.
-  
+
 ## License
 
 This repository is licensed under the Apache 2.0, see [LICENSE](./LICENSE) for details.
