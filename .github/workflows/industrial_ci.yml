@@ -3,11 +3,9 @@ name: industrial_ci
 on:
   push:
     paths-ignore:
-    - 'docs/**'
     - '**.md'
   pull_request:
     paths-ignore:
-    - 'docs/**'
     - '**.md'
   schedule:
     - cron: "0 2 * * 0" # Weekly on Sundays at 02:00
@@ -16,12 +14,14 @@ jobs:
   industrial_ci:
     strategy:
       matrix:
-        ROS_DISTRO: [jazzy]
-        ROS_REPO: [main]
+        env:
+          - { ROS_DISTRO: rolling, ROS_REPO: main}
+          - { ROS_DISTRO: jazzy, ROS_REPO: main}
+    env:
+      AFTER_SETUP_TARGET_WORKSPACE: 'apt update && apt install -y git'
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: "ros-industrial/industrial_ci@master"
-        env:
-          ROS_DISTRO: ${{ matrix.ROS_DISTRO }}
-          ROS_REPO: ${{ matrix.ROS_REPO }}
+        env: ${{ matrix.env }}
