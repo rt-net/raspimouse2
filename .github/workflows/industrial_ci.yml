@@ -15,7 +15,7 @@ on:
 jobs:
   industrial_ci:
     strategy:
-        fail-fast: false
+      fail-fast: false
       matrix:
         env:
           - { ROS_DISTRO: rolling, ROS_REPO: main}
