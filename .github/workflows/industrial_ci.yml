@@ -3,9 +3,11 @@ name: industrial_ci
 on:
   push:
     paths-ignore:
+    - 'docs/**'
     - '**.md'
   pull_request:
     paths-ignore:
+    - 'docs/**'
     - '**.md'
   schedule:
     - cron: "0 2 * * 0" # Weekly on Sundays at 02:00
