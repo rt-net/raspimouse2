@@ -2,6 +2,14 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.0.0 (2024-11-5)
+------------------
+* Update CI for ROS 2 Rolling(`https://github.com/rt-net/raspimouse2/pull/55`)
+* Fix documentation (`https://github.com/rt-net/raspimouse2/pull/54`)
+* Support for ROS 2 Jazzy (`https://github.com/rt-net/raspimouse2/pull/53`)
+* Replace `Twist` with `TwistStamped` in `/cmd_vel`
+* Contributors: Kazushi Kurasawa, Yusuke Kato
+
 1.1.2 (2023-08-24)
 ------------------
 * Calculate speed from robot parameters (`#50 <https://github.com/rt-net/raspimouse2/issues/50>`_)
