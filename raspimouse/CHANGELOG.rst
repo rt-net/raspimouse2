@@ -5,23 +5,23 @@ Changelog for package raspimouse
 2.0.0 (2024-11-5)
 ------------------
 * Update CI for ROS 2 Rolling(`https://github.com/rt-net/raspimouse2/pull/55`)
-  * Add CI settings for Rolling
+    * Add CI settings for Rolling
 
 * Fix documentation (`https://github.com/rt-net/raspimouse2/pull/54`)
-  * Add branch descriptions
-  * Add author to package.xml
-  * Emphasize branch description
+    * Add branch descriptions
+    * Add author to package.xml
+    * Emphasize branch description
 
 * Support for ROS 2 Jazzy (`https://github.com/rt-net/raspimouse2/pull/53`)
-  * Replace `Twist`` with `TwistStamped``
-  * Update README.md
-  * Correcte the image links
-  * Add author to package.xml
-  * Update the environment variables in "industrial_ci.yml" to Jazzy
-  * Remove unnecessary steps for launching the launch file in the "README.md"
-  * Correct import order to comply with flake8
-  * Update checkout version of GitHub Action
-  * Contributors: Kazushi Kurasawa, Yusuke Kato
+    * Replace `Twist`` with `TwistStamped``
+    * Update README.md
+    * Correcte the image links
+    * Add author to package.xml
+    * Update the environment variables in "industrial_ci.yml" to Jazzy
+    * Remove unnecessary steps for launching the launch file in the "README.md"
+    * Correct import order to comply with flake8
+    * Update checkout version of GitHub Action
+    * Contributors: Kazushi Kurasawa, Yusuke Kato
 
 1.1.2 (2023-08-24)
 ------------------
