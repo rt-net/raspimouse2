@@ -4,13 +4,15 @@ Changelog for package raspimouse
 
 2.0.0 (2024-11-5)
 ------------------
-* Update CI for ROS 2 Rolling(`<https://github.com/rt-net/raspimouse2/pull/55>`)
+* Update CI for ROS 2 Rolling(`https://github.com/rt-net/raspimouse2/pull/55`)
   * Add CI settings for Rolling
-* Fix documentation (`<https://github.com/rt-net/raspimouse2/pull/54>`)
+
+* Fix documentation (`https://github.com/rt-net/raspimouse2/pull/54`)
   * Add branch descriptions
   * Add author to package.xml
   * Emphasize branch description
-* Support for ROS 2 Jazzy (`<https://github.com/rt-net/raspimouse2/pull/53>`)
+
+* Support for ROS 2 Jazzy (`https://github.com/rt-net/raspimouse2/pull/53`)
   * Replace `Twist`` with `TwistStamped``
   * Update README.md
   * Correcte the image links
