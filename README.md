@@ -29,7 +29,7 @@ ROS 2 node for the Raspberry Pi Mouse.
   - [Parameters](#parameters)
   - [Node Description](#node-description)
   - [License](#license)
-  - [Development](#development)
+  - [Contributing](#contributing)
   - [Contributors](#contributors)
 
 
@@ -333,7 +333,7 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
 This repository is licensed under the Apache 2.0, see [LICENSE](./LICENSE) for details.
 
-## Development
+## Contributing
 
 - This software is open source, but its development is not open.
 - This software is essentially provided as open source software on an “AS IS” (in its current state) basis.
