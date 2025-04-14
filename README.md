@@ -16,6 +16,8 @@ ROS 2 node for the Raspberry Pi Mouse.
 
 - [raspimosue2](#raspimosue2)
   - [Table of Contents](#table-of-contents)
+  - [Supported ROS distributions](#supported-ros-distributions)
+    - [ROS 2](#ros-2)
   - [Requirements](#requirements)
   - [Installation](#installation)
     - [Binary Installation](#binary-installation)
@@ -32,7 +34,13 @@ ROS 2 node for the Raspberry Pi Mouse.
   - [Contributing](#contributing)
   - [Contributors](#contributors)
 
+## Supported ROS distributions
 
+### ROS 2
+
+- [Humble Hawksbill](https://github.com/rt-net/raspimouse2/tree/humble)
+- [Jazzy Jalisco](https://github.com/rt-net/raspimouse2/tree/jazzy)
+- 
 ## Requirements
 
 - Raspberry Pi Mouse
@@ -100,15 +108,13 @@ ros2 lifecycle set raspimouse shutdown
 
 - raspimouse
 
-  デバイスドライバーを利用し、Raspberry Pi Mouseを制御するパッケージです。
+  This package controls the Raspberry Pi Mouse using the device driver.
 
 - raspimouse_msgs
 
-  Raspberry Pi Mouseで使用するメッセージをていぎしたパッケージです。
+  This package defines the custom message types used by the Raspberry Pi Mouse.
 
 ## Topics 
-
-<!-- 説明が必要な場合は記述 -->
 
 ### Subscribed 
 
