@@ -1,4 +1,4 @@
-# raspimosue2
+# raspimouse2
 
 
 [![industrial_ci](https://github.com/rt-net/raspimouse2/actions/workflows/industrial_ci.yml/badge.svg?branch=master)](https://github.com/rt-net/raspimouse2/actions/workflows/industrial_ci.yml)
