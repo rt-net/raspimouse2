@@ -7,12 +7,9 @@
 
 ROS 2 node for the Raspberry Pi Mouse.
 
-**This branch is dedicated to ROS 2 Jazzy. For other distributions, please refer to the corresponding branches listed below.**
-- ROS 2 Humble ([humble](https://github.com/rt-net/raspimouse2/tree/humble?tab=readme-ov-file))
-
 ## Table of Contents
 
-- [raspimosue2](#raspimosue2)
+- [raspimouse2](#raspimouse2)
   - [Table of Contents](#table-of-contents)
   - [Supported ROS distributions](#supported-ros-distributions)
     - [ROS 2](#ros-2)
@@ -38,20 +35,17 @@ ROS 2 node for the Raspberry Pi Mouse.
 
 - [Humble Hawksbill](https://github.com/rt-net/raspimouse2/tree/humble)
 - [Jazzy Jalisco](https://github.com/rt-net/raspimouse2/tree/jazzy)
-- 
+
 ## Requirements
 
 - Raspberry Pi Mouse
   - [Summary](https://rt-net.jp/products/raspberrypimousev3/)
   - [RT Robot Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=4141)
 - Linux OS
-  - Ubuntu server
-    - 22.04
-    - 24.04
+  - Ubuntu server 24.04
 - Device Driver
   - [rt-net/RaspberryPiMouse](https://github.com/rt-net/RaspberryPiMouse)
 - ROS 2
-  - [Humble Hawksbill](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
   - [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
 
 ## Installation
@@ -334,7 +328,12 @@ Similarly other sensor information can also be viewed by echoing the relevant to
 
 ## License
 
-This repository is licensed under the Apache 2.0, see [LICENSE](./LICENSE) for details.
+(C) 2018 RT Corporation <support@rt-net.jp>
+
+Each file is licensed as stated in their headers.  
+If no license is specified, the file is licensed under the Apache License, Version 2.0.  
+The full license text is available in the [LICENSE](./LICENSE) file or at [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
 
 ## Contributing
 
