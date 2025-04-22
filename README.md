@@ -98,191 +98,118 @@ ros2 lifecycle set raspimouse shutdown
 ## Packages
 
 - raspimouse
-
-  This package controls the Raspberry Pi Mouse using the device driver.
+  - This package controls the Raspberry Pi Mouse using the device driver.
 
 - raspimouse_msgs
+  - This package defines the custom message types used by the Raspberry Pi Mouse.
 
-  This package defines the custom message types used by the Raspberry Pi Mouse.
+## Topics
 
-## Topics 
-
-### Subscribed 
+### Subscribed
 
 - `buzzer`
-
-  Type: `std_msgs/Int16`
-
-  Used to control the buzzer. Provide a value in Hertz and the buzzer will emit that tone.
-
+  - Type: `std_msgs/Int16`
+  - Used to control the buzzer. Provide a value in Hertz and the buzzer will emit that tone.
+  -
 - `cmd_vel`
-
-  Type: `geometry_msgs/msg/TwistStamped`
-
-  Controls the motors. Specify the forward and turning speeds of the robot.
+  - Type: `geometry_msgs/msg/TwistStamped`
+  - Controls the motors. Specify the forward and turning speeds of the robot.
 
 - `leds`
-
-  Type: `raspimouse_msgs/Leds`
-
-  Turns the four LEDs on the front of the robot on and off.
+  - Type: `raspimouse_msgs/Leds`
+  - Turns the four LEDs on the front of the robot on and off.
   
 ### Published
 
 - `light_sensors`
-
-  Type: `raspimouse_msgs/LightSensors`
-
-  Provides the raw values from the light sensors on the front of the robot.
+  - Type: `raspimouse_msgs/LightSensors`
+  - Provides the raw values from the light sensors on the front of the robot.
 
 - `odom`
-
-  Type: `nav_msgs/Odometry`
-
-  Provides odometry. If hardware pulse counters are available and the `use_pulse_counters`
-  parameter is set to `true`, the odometry is calculated from the motor control pulse counts.
-  Otherwise, the odometry is estimated based on the velocity commands given to the robot and
-  elapsed time.
+  - Type: `nav_msgs/Odometry`
+  - Provides odometry. If hardware pulse counters are available and the `use_pulse_counters` parameter is set to `true`, the odometry is calculated from the motor control pulse counts. Otherwise, the odometry is estimated based on the velocity commands given to the robot and elapsed time.
 
 - `switches`
-
-  Type: `raspimouse_msgs/Switches`
-
-  Provides the status of each of the three push switches on the side of the robot.
+  - Type: `raspimouse_msgs/Switches`
+  - Provides the status of each of the three push switches on the side of the robot.
 
 ## Services
 
 - `motor_power`
-
-  Type: `std_srvs/SetBool`
-
-  Call this service and pass `true` to enable the motors. Pass `false` to disable the motors.
+  - Type: `std_srvs/SetBool`
+  - Call this service and pass `true` to enable the motors. Pass `false` to disable the motors.
 
 ## Parameters
 
 - `odometry_scale_left_wheel`
-
-  Type: `double`
-
-  Default: `1.0`
-
-  Use to adjust the odometry input from the left wheel (when using pulse counters to calculate
-  odometry). This is used to account for slight differences in wheel diameter and wheel slip
-  between the left and right wheels.
+  - Type: `double`
+  - Default: `1.0`
+  - Use to adjust the odometry input from the left wheel (when using pulse counters to calculate odometry). This is used to account for slight differences in wheel diameter and wheel slip between the left and right wheels.
 
 - `odometry_scale_right_wheel`
-
-  Type: `double`
-
-  Default: `1.0`
-
-  Use to adjust the odometry input from the right wheel (when using pulse counters to calculate
-  odometry). This is used to account for slight differences in wheel diameter and wheel slip
-  between the left and right wheels.
+  - Type: `double`
+  - Default: `1.0`
+  - Use to adjust the odometry input from the right wheel (when using pulse counters to calculate odometry). This is used to account for slight differences in wheel diameter and wheel slip between the left and right wheels.
 
 - `use_light_sensors`
-
-  Type: `boolean`
-
-  Default: `true`
-
-  Enable or disable the light sensors on the front of the robot.
+  - Type: `boolean`
+  - Default: `true`
+  - Enable or disable the light sensors on the front of the robot.
 
 - `use_pulse_counters`
-
-  Type: `boolean`
-
-  Default: `false`
-
-  Use hardware pulse counters as the odometry source. When set to true, hardware pulse counters
-  will be used only if present.
+  - Type: `boolean`
+  - Default: `false`
+  - Use hardware pulse counters as the odometry source. When set to true, hardware pulse counters will be used only if present.
 
 - `wheel_diameter`
-
-  Type: `double`
-
-  Default: `0.048`
-
-  Sets the diameter of the robot's wheel.
-  The unit is in meters.
+  - Type: `double`
+  - Default: `0.048`
+  - Sets the diameter of the robot's wheel. The unit is in meters.
 
 - `wheel_tread`
-
-  Type: `double`
-
-  Default: `0.0925`
-
-  Sets the distance between the wheels.
-  The unit is in meters.
+  - Type: `double`
+  - Default: `0.0925`
+  - Sets the distance between the wheels. The unit is in meters.
 
 - `pulses_per_revolution`
-
-  Type: `double`
-
-  Default: `400.0`
-
-  Sets the number of pulses needed for 1 rotation of the used motor.
+  - Type: `double`
+  - Default: `400.0`
+  - Sets the number of pulses needed for 1 rotation of the used motor.
 
 - `light_sensors_hz`
-
-  Type: `double`
-
-  Default: `100.0`
-
-  Sets the frequency of the publishing rate of the topic `light_sensors`.
-  The unit is in Hz.
+  - Type: `double`
+  - Default: `100.0`
+  - Sets the frequency of the publishing rate of the topic `light_sensors`. The unit is in Hz.
 
 - `odom_hz`
-
-  Type: `double`
-
-  Default: `100.0`
-
-  Sets the frequency of the publishing rate of the topic `odom`.
-  The unit is in Hz.
+  - Type: `double`
+  - Default: `100.0`
+  - Sets the frequency of the publishing rate of the topic `odom`. The unit is in Hz.
 
 - `switches_hz`
-
-  Type: `double`
-
-  Default: `10.0`
-
-  Sets the frequency of the publishing rate of the topic `switches`.
-  The unit is in Hz.
+  - Type: `double`
+  - Default: `10.0`
+  - Sets the frequency of the publishing rate of the topic `switches`. The unit is in Hz.
 
 - `initial_motor_power`
-
-  Type: `bool`
-
-  Default: `False`
-
-  Sets the initial state of the motor.
-  If set as `True`, the motors will turn on when the `raspimouse` node becomes active.
+  - Type: `bool`
+  - Default: `False`
+  - Sets the initial state of the motor. If set as `True`, the motors will turn on when the `raspimouse` node becomes active.
 
 - `odom_frame_id`
-
-  Type: `string`
-
-  Default: `odom`
-
-  Sets the frame_id of the topic `odom`.
+  - Type: `string`
+  - Default: `odom`
+  - Sets the frame_id of the topic `odom`.
 
 - `odom_child_frame_id`
-
-  Type: `string`
-
-  Default: `base_footprint`
-
-  Sets the child_frame_id of the topic `odom`.
+  - Type: `string`
+  - Default: `base_footprint`
+  - Sets the child_frame_id of the topic `odom`.
 
 - `odom_frame_prefix`
-
-  Type: `string`
-
-  Default: `{empty}`
-
-  Adds prefix to the frames of the topic `odom`.
-  If set as *`mouse`*, the frame_id and the child_frame_id will be *`mouse/odom`* and *`mouse/baes_footprint`*.
+  - Type: `string`
+  - Default: `{empty}`
+  - Adds prefix to the frames of the topic `odom`. If set as *`mouse`*, the frame_id and the child_frame_id will be *`mouse/odom`* and *`mouse/baes_footprint`*.
 
 ## Node Description
 
@@ -334,7 +261,6 @@ Each file is licensed as stated in their headers.
 If no license is specified, the file is licensed under the Apache License, Version 2.0.  
 The full license text is available in the [LICENSE](./LICENSE) file or at [https://www.apache.org/licenses/LICENSE-2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
-
 ## Contributing
 
 - This software is open source, but its development is not open.
@@ -344,9 +270,8 @@ The full license text is available in the [LICENSE](./LICENSE) file or at [ht
 
 ## Contributors
 
-* Geoffrey Biggs ([@gbiggs](https://github.com/gbiggs)), **original author**
-* Shota Hirama ([@shotahirama](https://github.com/shotahirama))
-* Yutaka Kondo ([@youtalk](https://github.com/youtalk))
+- Geoffrey Biggs ([@gbiggs](https://github.com/gbiggs)), **original author**
+- Shota Hirama ([@shotahirama](https://github.com/shotahirama))
+- Yutaka Kondo ([@youtalk](https://github.com/youtalk))
 
 Contributions are always welcome!
-
