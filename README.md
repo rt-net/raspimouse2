@@ -110,7 +110,7 @@ ros2 lifecycle set raspimouse shutdown
 - `buzzer`
   - Type: `std_msgs/Int16`
   - Used to control the buzzer. Provide a value in Hertz and the buzzer will emit that tone.
-  -
+
 - `cmd_vel`
   - Type: `geometry_msgs/msg/TwistStamped`
   - Controls the motors. Specify the forward and turning speeds of the robot.
