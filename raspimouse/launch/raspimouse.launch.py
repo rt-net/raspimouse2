@@ -28,11 +28,14 @@ from lifecycle_msgs.msg import Transition
 
 def generate_launch_description():
     mouse_node = LifecycleNode(
-        namespace='',
         name='raspimouse',
-        package='raspimouse', executable='raspimouse', output='screen',
-        parameters=[os.path.join(get_package_share_directory(
-            'raspimouse'), 'config', 'params.yaml')]
+        namespace='',
+        package='raspimouse',
+        executable='raspimouse',
+        output='screen',
+        parameters=[
+            os.path.join(get_package_share_directory('raspimouse'), 'config', 'params.yaml')
+        ],
     )
 
     emit_configuring_event = EmitEvent(
@@ -49,17 +52,13 @@ def generate_launch_description():
         )
     )
 
-    emit_shutdown_event = EmitEvent(
-        event=Shutdown()
-    )
+    emit_shutdown_event = EmitEvent(event=Shutdown())
 
     register_activating_transition = RegisterEventHandler(
         OnStateTransition(
             target_lifecycle_node=mouse_node,
             goal_state='inactive',
-            entities=[
-                emit_activating_event
-            ],
+            entities=[emit_activating_event],
         )
     )
 
@@ -67,16 +66,15 @@ def generate_launch_description():
         OnStateTransition(
             target_lifecycle_node=mouse_node,
             goal_state='finalized',
-            entities=[
-                emit_shutdown_event
-            ],
+            entities=[emit_shutdown_event],
         )
     )
 
-    ld = LaunchDescription()
-    ld.add_action(mouse_node)
-    ld.add_action(register_activating_transition)
-    ld.add_action(register_shutting_down_transition)
-    ld.add_action(emit_configuring_event)
-
-    return ld
+    return LaunchDescription(
+        [
+            mouse_node,
+            register_activating_transition,
+            register_shutting_down_transition,
+            emit_configuring_event,
+        ]
+    )
