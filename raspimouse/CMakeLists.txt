@@ -11,10 +11,10 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-find_package(class_loader REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(rclcpp_components REQUIRED)
+find_package(lifecycle_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED)
 find_package(geometry_msgs REQUIRED)
@@ -30,6 +30,7 @@ target_include_directories(raspimouse_component PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(raspimouse_component PUBLIC
   geometry_msgs::geometry_msgs
+  lifecycle_msgs::lifecycle_msgs
   nav_msgs::nav_msgs
   rclcpp::rclcpp
   rclcpp_components::component
@@ -45,15 +46,14 @@ add_executable(raspimouse src/raspimouse.cpp)
 target_include_directories(raspimouse PRIVATE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 target_link_libraries(raspimouse PRIVATE
-  class_loader::class_loader
   raspimouse_component)
 
 ament_export_targets(export_raspimouse_component HAS_LIBRARY_TARGET)
 
-ament_export_dependencies(rosidl_default_runtime)
 ament_export_dependencies(rclcpp)
 ament_export_dependencies(rclcpp_lifecycle)
 ament_export_dependencies(rclcpp_components)
+ament_export_dependencies(lifecycle_msgs)
 ament_export_dependencies(std_msgs)
 ament_export_dependencies(std_srvs)
 ament_export_dependencies(geometry_msgs)
@@ -61,9 +61,6 @@ ament_export_dependencies(nav_msgs)
 ament_export_dependencies(tf2)
 ament_export_dependencies(tf2_ros)
 ament_export_dependencies(raspimouse_msgs)
-
-ament_export_include_directories(include)
-ament_export_libraries(raspimouse_component)
 
 install(
   DIRECTORY include/
