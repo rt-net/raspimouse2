@@ -35,6 +35,7 @@ ROS 2 node for the Raspberry Pi Mouse.
 
 - [Humble Hawksbill](https://github.com/rt-net/raspimouse2/tree/humble)
 - [Jazzy Jalisco](https://github.com/rt-net/raspimouse2/tree/jazzy)
+- [Lyrical Luth](https://github.com/rt-net/raspimouse2/tree/lyrical)
 
 ## Requirements
 
@@ -42,11 +43,11 @@ ROS 2 node for the Raspberry Pi Mouse.
   - [Summary](https://rt-net.jp/products/raspberrypimousev3/)
   - [RT Robot Shop](https://www.rt-shop.jp/index.php?main_page=product_info&products_id=4141)
 - Linux OS
-  - Ubuntu server 24.04
+  - Ubuntu server 26.04
 - Device Driver
   - [rt-net/RaspberryPiMouse](https://github.com/rt-net/RaspberryPiMouse)
 - ROS 2
-  - [Jazzy Jalisco](https://docs.ros.org/en/jazzy/Installation/Ubuntu-Install-Debs.html)
+  - [Lyrical Luth](https://docs.ros.org/en/lyrical/Installation/Ubuntu-Install-Debs.html)
 
 ## Installation
 
