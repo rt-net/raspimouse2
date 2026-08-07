@@ -2,6 +2,13 @@
 Changelog for package raspimouse
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+3.0.0 (2026-8-7)
+------------------
+* ROS 2 Lyrical対応 (`#59 <https://github.com/rt-net/raspimouse2/pull/59>`_)
+* Modern CMakeへの移行
+* Ruffによるフォーマット (`#58 <https://github.com/rt-net/raspimouse2/pull/58>`_)
+* Contributors: Yusuke Kato, Kazushi Kurasawa
+
 2.0.0 (2024-11-5)
 ------------------
 * Update CI for ROS 2 Rolling(`https://github.com/rt-net/raspimouse2/pull/55`)
